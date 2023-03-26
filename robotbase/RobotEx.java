@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robotbase;
+package inventors.robotbase;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -8,7 +8,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.myroadrunner.drive.SampleMecanumDrive;
+import inventors.myroadrunner.drive.SampleMecanumDrive;
 
 
 public class RobotEx {
