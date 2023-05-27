@@ -4,11 +4,10 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import inventors.myroadrunner.drive.SampleMecanumDrive;
 
 
 public class RobotEx {
@@ -25,10 +24,9 @@ public class RobotEx {
     protected GamepadExEx driverOp;
     protected GamepadExEx toolOp;
 
-    protected MecanumDriveSubsystem drive = null;
+    protected MecanumDrivePPV2 drive = null;
     protected MecanumDriveCommand driveCommand = null;
 
-    protected SampleMecanumDrive rrDrive = null;
     public Camera camera;
 
     protected HeadingControllerSubsystem gyroFollow;
@@ -39,19 +37,16 @@ public class RobotEx {
 
     public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
                    GamepadExEx toolOp) {
-        this(hardwareMap, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, false,
-                false, false, false, false);
+        this(hardwareMap, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, false);
     }
 
     public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
-                   GamepadExEx toolOp, OpModeType type, Boolean initCamera, Boolean useCameraFollower,
-                   Boolean frontLeftInvert, Boolean frontRightInvert, Boolean rearLeftInvert,
-                   Boolean rearRightInvert) {
+                   GamepadExEx toolOp, OpModeType type, Boolean initCamera, Boolean useCameraFollower
+    ) {
         this.initCamera = initCamera;
-        initCommon(hardwareMap, telemetry);
+        initCommon(hardwareMap, telemetry, type);
         if (type == OpModeType.TELEOP) {
-            initTele(hardwareMap, telemetry, driverOp, toolOp, useCameraFollower, frontLeftInvert,
-                    frontRightInvert, rearLeftInvert, rearRightInvert);
+            initTele(hardwareMap, telemetry, driverOp, toolOp, useCameraFollower);
             opModeType = OpModeType.TELEOP;
         } else {
             initAuto(hardwareMap, telemetry);
@@ -59,7 +54,7 @@ public class RobotEx {
         }
     }
 
-    public void initCommon(HardwareMap hardwareMap, Telemetry telemetry) {
+    public void initCommon(HardwareMap hardwareMap, Telemetry telemetry, OpModeType type) {
         /////////////////////////////////////// Telemetries //////////////////////////////////////
         dashboard = FtcDashboard.getInstance();
         dashboardTelemetry = dashboard.getTelemetry();
@@ -74,29 +69,29 @@ public class RobotEx {
             camera = new Camera(hardwareMap, dashboard, telemetry);
 //                    () -> this.driverOp.getButton(GamepadKeys.Button.BACK));
         }
+        drive = new MecanumDrivePPV2(hardwareMap, type);
     }
 
     public void initAuto(HardwareMap hardwareMap, Telemetry telemetry) {
         //////////////////////////////////////// Drivetrain ////////////////////////////////////////
-        SampleMecanumDrive rrDrive = new SampleMecanumDrive(hardwareMap);
+//        SampleMecanumDrive rrDrive = new SampleMecanumDrive(hardwareMap);
 
         ////////////////////////// Setup and Initialize Mechanisms Objects /////////////////////////
         initMechanismsAutonomous(hardwareMap);
     }
 
     public void initTele(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
-                         GamepadExEx toolOp, Boolean useCameraFollower, Boolean frontLeftInvert, Boolean frontRightInvert, Boolean rearLeftInvert,
-                         Boolean rearRightInvert) {
+                         GamepadExEx toolOp, Boolean useCameraFollower) {
         ///////////////////////////////////////// Gamepads /////////////////////////////////////////
         this.driverOp = driverOp;
         this.toolOp = toolOp;
 
         //////////////////////////////////////// Drivetrain ////////////////////////////////////////
-        drive = new MecanumDriveSubsystem(hardwareMap, frontLeftInvert, frontRightInvert,
-                rearLeftInvert, rearRightInvert);
+//        drive = new MecanumDriveSubsystem(hardwareMap, frontLeftInvert, frontRightInvert,
+//                rearLeftInvert, rearRightInvert);
         driveCommand = new MecanumDriveCommand(drive, this::drivetrainForward,
                 this::drivetrainStrafe, this::drivetrainTurn, gyro::getRawYaw,
-                () -> driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
+                () -> driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), () -> driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
 
         CommandScheduler.getInstance().registerSubsystem(drive);
         drive.setDefaultCommand(driveCommand);
