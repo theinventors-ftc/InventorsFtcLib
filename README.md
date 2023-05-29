@@ -1,4 +1,4 @@
-# inventors-ftc-lib
+# InventorsFtcLib
 
 A repository containing various tools to easily use in your FTC teamcode.
 
