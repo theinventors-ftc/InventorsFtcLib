@@ -8,9 +8,6 @@ import java.text.SimpleDateFormat
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 
-group = 'com.github.theinventors-ftc'
-version = '0.0.1'
-
 android {
     defaultConfig {
         minSdkVersion 23
@@ -29,6 +26,14 @@ android {
 //    packagingOptions {
 //        jniLibs.useLegacyPackaging true
 //    }
+    publishing {
+        publishing {
+            singleVariant('release') {
+                withSourcesJar()
+                withJavadocJar()
+            }
+        }
+    }
 }
 
 buildscript {
@@ -67,22 +72,27 @@ dependencies {
     implementation 'org.ftclib.ftclib:core:2.0.1' // core
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'org.openftc:apriltag:1.1.0'
+    implementation 'com.acmerobotics.roadrunner:core:0.5.5'
 }
-android {
-    publishing {
-        multipleVariants {
-            allVariants() // or calls to includeBuildTypeValues and includeFlavorDimensionAndValues
-                withSourcesJar()
-                withJavadocJar()
-        }
-    }
-}
+//android {
+//    publishing {
+//        multipleVariants {
+//            allVariants() // or calls to includeBuildTypeValues and includeFlavorDimensionAndValues
+//                withSourcesJar()
+//                withJavadocJar()
+//        }
+//    }
+//}
 
-afterEvaluate {
-    publishing {
-        publications {
-            maven(MavenPublication) {
-                from(components["default"])
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = 'com.github.theinventors-ftc'
+            artifactId = 'InventorsFtcLib'
+            version = '0.0.1'
+
+            afterEvaluate {
+                from components.release
             }
         }
     }
