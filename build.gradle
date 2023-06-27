@@ -4,9 +4,7 @@ import java.text.SimpleDateFormat
 // build.gradle in InventorsFtcLib
 //
 
-plugins {
-    id 'com.android.library'
-}
+apply plugin: 'com.android.library'
 
 android {
     defaultConfig {
@@ -28,12 +26,20 @@ android {
 //    }
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.2.0'
+
+    }
+}
+
 repositories {
     mavenCentral()
     google() // Needed for androidx
-    flatDir {
-        dirs rootProject.file('libs')
-    }
     maven { url = 'https://maven.brott.dev/' }
 }
 
@@ -50,8 +56,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'org.firstinspires.ftc:gameAssets-PowerPlay:1.0.0'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.6'
-    implementation project(':FtcRobotController')
-//    implementation project(':TeamCode')
 //    annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'org.openftc:easyopencv:1.5.2'
     implementation 'org.ftclib.ftclib:vision:2.0.1' // vision
