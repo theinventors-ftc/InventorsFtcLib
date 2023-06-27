@@ -1,22 +1,40 @@
-//plugins {
-//    id 'com.android.library'
-//}
+import java.text.SimpleDateFormat
 
-// Include common definitions from above.
-apply from: '../build.common.gradle'
-apply from: '../build.dependencies.gradle'
+//
+// build.gradle in InventorsFtcLib
+//
+
+plugins {
+    id 'com.android.library'
+}
 
 android {
-    namespace 'org.inventors'
-    packagingOptions {
-        jniLibs.useLegacyPackaging true
+    defaultConfig {
+        minSdkVersion 23
+        //noinspection ExpiredTargetSdkVersion
+        targetSdkVersion 28
+        buildConfigField "String", "APP_BUILD_TIME", '"' + (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ROOT).format(new Date())) + '"'
     }
+
+    compileSdkVersion 29
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    namespace 'org.inventors.ftc'
+//    packagingOptions {
+//        jniLibs.useLegacyPackaging true
+//    }
 }
+
+// Include common definitions from above.
+apply from: '../build.dependencies.gradle'
 
 dependencies {
     implementation project(':FtcRobotController')
-    implementation project(':TeamCode')
-    annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+//    implementation project(':TeamCode')
+//    annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'org.openftc:easyopencv:1.5.2'
     implementation 'org.ftclib.ftclib:vision:2.0.1' // vision
     implementation 'org.ftclib.ftclib:core:2.0.1' // core
