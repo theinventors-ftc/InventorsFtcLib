@@ -1,9 +1,8 @@
-package inventors.robotbase;
-
-import androidx.annotation.NonNull;
+package org.inventors.robotbase;
 
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import androidx.annotation.NonNull;
 
 public class MotorExEx extends MotorEx {
     /**

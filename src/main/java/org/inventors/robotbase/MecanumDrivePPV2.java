@@ -1,38 +1,8 @@
-package inventors.robotbase;
+package org.inventors.robotbase;
 
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.COMMON_FEED_FORWARD;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.HEADING_PID;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.KD;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.KI;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.KP;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.LATERAL_MULTIPLIER;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.TRANSLATIONAL_PID;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.default_speed;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.fast_speed;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.frontLeftAutonomousInverted;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.frontLeftInverted;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.frontRightAutonomousInverted;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.frontRightInverted;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.kV;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.maxIntegralBound;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.minIntegralBound;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.rearLeftAutonomousInverted;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.rearLeftInverted;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.rearRightAutonomousInverted;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.rearRightInverted;
-import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.slow_speed;
-import static org.firstinspires.ftc.teamcode.robotbase.RobotEx.OpModeType.AUTO;
-import static org.firstinspires.ftc.teamcode.robotbase.RobotEx.OpModeType.TELEOP;
+import static org.firstinspires.ftc.teamcode.DriveConstants.*;
+import static org.inventors.robotbase.RobotEx.OpModeType.AUTO;
+import static org.inventors.robotbase.RobotEx.OpModeType.TELEOP;
 
 import androidx.annotation.NonNull;
 
@@ -60,10 +30,10 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.myroadrunner.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.myroadrunner.trajectorysequence.TrajectorySequenceBuilder;
-import org.firstinspires.ftc.teamcode.myroadrunner.trajectorysequence.TrajectorySequenceRunner;
-import org.firstinspires.ftc.teamcode.myroadrunner.util.LynxModuleUtil;
+import org.inventors.trajectorysequence.TrajectorySequence;
+import org.inventors.trajectorysequence.TrajectorySequenceBuilder;
+import org.inventors.trajectorysequence.TrajectorySequenceRunner;
+import org.inventors.util.LynxModuleUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -177,7 +147,7 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
     }
     void drive(double strafeSpeed, double forwardSpeed, double turnSpeed, double heading, double fast_input, double slow_input)
     {
-        drive.setMaxSpeed(default_speed + fast_input * fast_speed - slow_input * slow_speed);
+        drive.setMaxSpeed(DEFAULT_SPEED_PERC + fast_input * FAST_SPEED_PERC - slow_input * SLOW_SPEED_PERC);
         drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, heading);
     }
     public void setMotorsInverted(

@@ -1,4 +1,4 @@
-package inventors.robotbase;
+package org.inventors.robotbase;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.hardware.Gamepad;

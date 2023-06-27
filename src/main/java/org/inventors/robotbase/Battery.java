@@ -1,4 +1,4 @@
-package inventors.robotbase;
+package org.inventors.robotbase;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;

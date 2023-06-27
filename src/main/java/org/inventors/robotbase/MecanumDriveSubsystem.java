@@ -1,7 +1,8 @@
-package inventors.robotbase;
+package org.inventors.robotbase;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
+
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 

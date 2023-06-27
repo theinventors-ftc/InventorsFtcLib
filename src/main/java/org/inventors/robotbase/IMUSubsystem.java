@@ -1,10 +1,14 @@
-package inventors.robotbase;
+package org.inventors.robotbase;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import org.inventors.robotbase.RevIMU;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.RevIMU;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.inventors.robotbase.RevOldIMU;
 
 public class IMUSubsystem extends SubsystemBase {
     private final RevIMU imu;

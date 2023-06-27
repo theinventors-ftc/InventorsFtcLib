@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
 
-package inventors.opencvpipelines;
+package org.inventors.opencvpipelines;
 
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;

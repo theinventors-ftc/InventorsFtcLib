@@ -1,19 +1,19 @@
-package inventors.robotbase;
+package org.inventors.robotbase;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.opencvpipelines.AprilTagDetectionPipeline;
+import org.inventors.opencvpipelines.AprilTagDetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+
 public class Camera {
     private final OpenCvWebcam webcam;
-//    protected RectangleTracking pipeline;
+    //    protected RectangleTracking pipeline;
     protected AprilTagDetectionPipeline april_tag_pipeline;
 
     double fx = 578.272;

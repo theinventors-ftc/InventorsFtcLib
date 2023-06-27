@@ -1,4 +1,4 @@
-package inventors.robotbase;
+package org.inventors.robotbase;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -6,9 +6,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 
 public class RobotEx {
     // enum to specify opmode type

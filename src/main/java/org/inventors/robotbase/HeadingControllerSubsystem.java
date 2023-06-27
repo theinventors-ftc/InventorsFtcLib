@@ -1,4 +1,4 @@
-package inventors.robotbase;
+package org.inventors.robotbase;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;

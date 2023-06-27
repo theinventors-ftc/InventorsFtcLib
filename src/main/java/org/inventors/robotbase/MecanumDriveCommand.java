@@ -1,4 +1,4 @@
-package inventors.robotbase;
+package org.inventors.robotbase;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
@@ -9,8 +9,8 @@ public class MecanumDriveCommand extends CommandBase {
     private final DoubleSupplier forwardSpeed, strafeSpeed, turnSpeed, heading, slowTrigger, fastTrigger;
 
     public MecanumDriveCommand(MecanumDrivePPV2 drivetrain, DoubleSupplier forwardSpeed,
-                                DoubleSupplier strafeSpeed, DoubleSupplier turnSpeed,
-                                DoubleSupplier heading, DoubleSupplier fastTrigger, DoubleSupplier slowTrigger) {
+                               DoubleSupplier strafeSpeed, DoubleSupplier turnSpeed,
+                               DoubleSupplier heading, DoubleSupplier fastTrigger, DoubleSupplier slowTrigger) {
         this.drivetrain = drivetrain;
         this.forwardSpeed = forwardSpeed;
         this.strafeSpeed = strafeSpeed;
