@@ -4,7 +4,12 @@ import java.text.SimpleDateFormat
 // build.gradle in InventorsFtcLib
 //
 
+
 apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+
+group = 'com.github.theinventors-ftc'
+version = '0.0.1'
 
 android {
     defaultConfig {
@@ -33,7 +38,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.2.0'
-
     }
 }
 
@@ -63,3 +67,30 @@ dependencies {
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'org.openftc:apriltag:1.1.0'
 }
+//
+//sourceSets{
+//    main {
+//        java {
+//            srcDir("src/main/java")
+//        }
+//    }
+//}
+
+//tasks {
+//    javadoc {
+//        // Task configuration
+//    }
+//}
+//
+//java {
+//    withSourcesJar()
+//    withJavadocJar()
+//}
+//
+//publishing {
+//    publications {
+//        maven(MavenPublication) {
+//            from components.java
+//        }
+//    }
+//}
