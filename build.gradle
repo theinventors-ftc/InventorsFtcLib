@@ -74,15 +74,6 @@ dependencies {
     implementation 'org.openftc:apriltag:1.1.0'
     implementation 'com.acmerobotics.roadrunner:core:0.5.5'
 }
-//android {
-//    publishing {
-//        multipleVariants {
-//            allVariants() // or calls to includeBuildTypeValues and includeFlavorDimensionAndValues
-//                withSourcesJar()
-//                withJavadocJar()
-//        }
-//    }
-//}
 
 publishing {
     publications {
@@ -97,31 +88,3 @@ publishing {
         }
     }
 }
-
-//
-//sourceSets{
-//    main {
-//        java {
-//            srcDir("src/main/java")
-//        }
-//    }
-//}
-
-//tasks {
-//    javadoc {
-//        // Task configuration
-//    }
-//}
-//
-//java {
-//    withSourcesJar()
-//    withJavadocJar()
-//}
-//
-//publishing {
-//    publications {
-//        maven(MavenPublication) {
-//            from components.java
-//        }
-//    }
-//}
