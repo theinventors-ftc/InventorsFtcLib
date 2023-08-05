@@ -1,6 +1,11 @@
 package org.inventors.ftc.robotbase;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
@@ -15,9 +20,8 @@ public class RobotEx {
     }
 
     protected OpModeType opModeType;
-    protected Telemetry telemetry;
+    protected TelemetrySubsystem telemetrySubsystem;
     protected FtcDashboard dashboard;
-    protected Telemetry dashboardTelemetry;
 
     protected GamepadExEx driverOp;
     protected GamepadExEx toolOp;
@@ -33,44 +37,46 @@ public class RobotEx {
 
     protected IMUSubsystem gyro;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
                    GamepadExEx toolOp) {
         this(hardwareMap, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, false);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
                    GamepadExEx toolOp, OpModeType type, Boolean initCamera, Boolean useCameraFollower
     ) {
         this.initCamera = initCamera;
         initCommon(hardwareMap, telemetry, type);
         if (type == OpModeType.TELEOP) {
-            initTele(hardwareMap, telemetry, driverOp, toolOp, useCameraFollower);
+            initTele(hardwareMap, driverOp, toolOp, useCameraFollower);
             opModeType = OpModeType.TELEOP;
         } else {
-            initAuto(hardwareMap, telemetry);
+            initAuto(hardwareMap);
             opModeType = OpModeType.AUTO;
         }
     }
 
     public void initCommon(HardwareMap hardwareMap, Telemetry telemetry, OpModeType type) {
-        /////////////////////////////////////// Telemetries //////////////////////////////////////
+        //////////////////////////////////////// Telemetries ///////////////////////////////////////
         dashboard = FtcDashboard.getInstance();
-        dashboardTelemetry = dashboard.getTelemetry();
-        this.telemetry = telemetry;
+        this.telemetrySubsystem = new TelemetrySubsystem(telemetry, dashboard.getTelemetry());
+        CommandScheduler.getInstance().registerSubsystem(telemetrySubsystem);
 
         //////////////////////////////////////////// IMU ///////////////////////////////////////////
-        gyro = new IMUSubsystem(hardwareMap, this.telemetry, dashboardTelemetry);
+        gyro = new IMUSubsystem(hardwareMap);
         CommandScheduler.getInstance().registerSubsystem(gyro);
 
         ////////////////////////////////////////// Camera //////////////////////////////////////////
         if (this.initCamera) {
-            camera = new Camera(hardwareMap, dashboard, telemetry);
+            camera = new Camera(hardwareMap, dashboard);
 //                    () -> this.driverOp.getButton(GamepadKeys.Button.BACK));
         }
         drive = new MecanumDrivePPV2(hardwareMap, type);
     }
 
-    public void initAuto(HardwareMap hardwareMap, Telemetry telemetry) {
+    public void initAuto(HardwareMap hardwareMap) {
         //////////////////////////////////////// Drivetrain ////////////////////////////////////////
 //        SampleMecanumDrive rrDrive = new SampleMecanumDrive(hardwareMap);
 
@@ -78,7 +84,8 @@ public class RobotEx {
         initMechanismsAutonomous(hardwareMap);
     }
 
-    public void initTele(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void initTele(HardwareMap hardwareMap, GamepadExEx driverOp,
                          GamepadExEx toolOp, Boolean useCameraFollower) {
         ///////////////////////////////////////// Gamepads /////////////////////////////////////////
         this.driverOp = driverOp;
@@ -119,12 +126,6 @@ public class RobotEx {
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
                 .whenPressed(new InstantCommand(gyroFollow::toggleState, gyroFollow));
 
-//        telemetryEx.addMonitor("Left X: ", () -> toolOp.getLeftX());
-//
-//        telemetryEx.addMonitor("Left Y: ", () -> toolOp.getLeftY());
-//        telemetryEx.addMonitor("Right X: ", () -> toolOp.getRightX());
-//        telemetryEx.addMonitor("Right Y: ", () -> toolOp.getRightY());
-
         ////////////////////////////////////// Camera Follower /////////////////////////////////////
 //        if (initCamera && useCameraFollower) {
 //            cameraFollow = new HeadingControllerSubsystem(camera::getObject_x);
@@ -152,20 +153,8 @@ public class RobotEx {
         return driverOp.getLeftY();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public double drivetrainTurn() {
-        if (gyroFollow.isEnabled())
-            return -gyroFollow.calculateTurn();
-//        if (initCamera && cameraFollow.isEnabled())
-//            return cameraFollow.calculateTurn();
-
-        return driverOp.getRightX();
-    }
-
-    public void telemetryUpdate() {
-        telemetry.update();
-    }
-
-    public void dashboardTelemetryUpdate() {
-        dashboardTelemetry.update();
+        return gyroFollow.isEnabled() ? -gyroFollow.calculateTurn() : driverOp.getRightX();
     }
 }

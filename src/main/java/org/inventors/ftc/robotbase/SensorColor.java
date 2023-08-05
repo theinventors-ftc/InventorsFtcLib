@@ -139,8 +139,6 @@ public class SensorColor extends LinearOpMode {
         telemetry.addData("color", colorSensor.getNormalizedColors().green);
 //        telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
       }
-
-      telemetry.update();
     }
   }
 }

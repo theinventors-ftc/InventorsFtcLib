@@ -1,5 +1,9 @@
 package org.inventors.ftc.robotbase;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import com.arcrobotics.ftclib.command.SubsystemBase;
 
 import java.util.function.DoubleSupplier;
@@ -14,6 +18,7 @@ public class IIRSystem extends SubsystemBase {
         this.smoothing_constant = smoothing_constant;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void periodic() {
         smoothed_value = smoothing_constant * value.getAsDouble() + (1-smoothing_constant) * smoothed_value;

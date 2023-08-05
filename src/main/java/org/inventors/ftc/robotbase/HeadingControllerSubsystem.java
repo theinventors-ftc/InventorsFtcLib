@@ -1,5 +1,9 @@
 package org.inventors.ftc.robotbase;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 
@@ -44,6 +48,7 @@ public class HeadingControllerSubsystem extends SubsystemBase {
         fType = Type.CAMERA;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public double calculateTurn() {
         double curValue;
         if (fType == Type.CAMERA) {
@@ -66,6 +71,7 @@ public class HeadingControllerSubsystem extends SubsystemBase {
         return enabled;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void setGyroTarget(double targetOrient) {
         double gyroValueDouble = gyroValue.getAsDouble();
         double dist, minDist;

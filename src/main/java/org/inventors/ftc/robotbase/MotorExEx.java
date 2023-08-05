@@ -1,6 +1,6 @@
 package org.inventors.ftc.robotbase;
 
-import com.acrobotics.ftclib.hardware.motors.MotorEx;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import androidx.annotation.NonNull;
 

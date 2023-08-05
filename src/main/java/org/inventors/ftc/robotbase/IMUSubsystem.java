@@ -6,8 +6,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class IMUSubsystem extends SubsystemBase {
     private final RevIMU imu;
-    private final Telemetry telemetry;
-    private final Telemetry dashboardTelemetry;
 
     private double previousRawYaw = 0;
     private double turns = 0;
@@ -17,9 +15,9 @@ public class IMUSubsystem extends SubsystemBase {
     private double contYaw;
 
     private double[] angles;
+    private TelemetrySubsystem telemetrySubsystem;
 
-    public IMUSubsystem(HardwareMap hardwareMap, Telemetry telemetry,
-                        Telemetry dashboardTelemetry) {
+    public IMUSubsystem(HardwareMap hardwareMap) {
         imu = new RevIMU(hardwareMap);
         imu.init();
 //        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -29,9 +27,6 @@ public class IMUSubsystem extends SubsystemBase {
 //        parameters.loggingEnabled = true;
 //        parameters.loggingTag = "IMU";
 //        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-        this.telemetry = telemetry;
-        this.dashboardTelemetry = dashboardTelemetry;
     }
 //        That is inside init!!
 
@@ -43,15 +38,10 @@ public class IMUSubsystem extends SubsystemBase {
 
         calculateContinuousValue();
 
-        telemetry.addData("Gyro Yaw:", rawYaw);
-        telemetry.addData("Gyro Pitch:", rawPitch);
-        telemetry.addData("Gyro Roll:", rawRoll);
-        telemetry.addData("Continuous Gyro Value:", contYaw);
-
-        dashboardTelemetry.addData("Raw Gyro Value: ", rawYaw);
-        dashboardTelemetry.addData("Gyro Pitch:", rawPitch);
-        dashboardTelemetry.addData("Gyro Roll:", rawRoll);
-        dashboardTelemetry.addData("Continuous Gyro Value:", contYaw);
+        telemetrySubsystem.addMonitor("Gyro Yaw", () -> rawYaw);
+        telemetrySubsystem.addMonitor("Gyro Pitch", () -> rawPitch);
+        telemetrySubsystem.addMonitor("Gyro Roll", () -> rawRoll);
+        telemetrySubsystem.addMonitor("Continuous Gyro Value", () -> contYaw);
     }
 
     public double getYaw() {
