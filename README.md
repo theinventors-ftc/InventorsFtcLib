@@ -7,7 +7,7 @@ The codebase heavily uses [FTCLib](https://github.com/FTCLib/FTCLib), [Road Runn
 # A. Installation:
 ## Step 1:
 Open up your FTC SDK Project in Android Studio. Locate and open the ```build.gradle(Module:Teamcode)``` file and add the following to the repositories section:
-```
+```Java
 repositories {
     maven { url = 'https://jitpack.io' }
 }
@@ -15,7 +15,7 @@ repositories {
 
 ## Step 2:
 Then add the following to the dependencies section:
-```
+```Java
 dependencies {
     ...
     implementation 'com.github.theinventors-ftc:InventorsFtcLib:0.0.1-alpha'
