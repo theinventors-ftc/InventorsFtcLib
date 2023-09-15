@@ -15,8 +15,9 @@ public class TelemetrySubsystem extends SubsystemBase {
     private List<Pair<String, Supplier> > monitors; // Pair<Caption, ValueSupplier>
 
     public TelemetrySubsystem(Telemetry dhTelemetry,Telemetry dashTelemetry) {
-        telemetries[0] = dhTelemetry;
-        telemetries[1] = dashTelemetry;
+        telemetries = new Telemetry[]{dhTelemetry, dashTelemetry};
+//        telemetries[0] = dhTelemetry;
+//        telemetries[1] = dashTelemetry;
     }
 
     public void addMonitor(String caption, Supplier value) {

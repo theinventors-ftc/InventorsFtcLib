@@ -42,31 +42,11 @@ import java.util.List;
  */
 @Config
 public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
-    /* ----------------------------------------- COMMON ----------------------------------------- */
-    public static double VX_WEIGHT = 1;
-    public static double VY_WEIGHT = 1;
-    public static double OMEGA_WEIGHT = 1;
-    private MotorExEx frontLeft, frontRight, rearRight, rearLeft;
-    private IMU imu;
-    private List<MotorExEx> motors;
-    private VoltageSensor batteryVoltageSensor;
+    static DriveConstants RobotConstants;
 
-    /* ----------------------------------------- TELEOP ----------------------------------------- */
-    protected String m_name = this.getClass().getSimpleName();
-    private com.arcrobotics.ftclib.drivebase.MecanumDrive drive;
-
-    /* --------------------------------------- AUTONOMOUS --------------------------------------- */
-    private TrajectorySequenceRunner trajectorySequenceRunner;
-    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(
-            SampleDriveConstants.MAX_VEL, SampleDriveConstants.MAX_ANG_VEL, SampleDriveConstants.TRACK_WIDTH
-    );
-    private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(SampleDriveConstants.MAX_ACCEL);
-    private TrajectoryFollower follower;
-    private List<Integer> lastEncPositions = new ArrayList<>();
-    private List<Integer> lastEncVels = new ArrayList<>();
-
-    public MecanumDrivePPV2(HardwareMap hardwareMap, RobotEx.OpModeType type) {
-        super(SampleDriveConstants.kV, SampleDriveConstants.kA, SampleDriveConstants.kStatic, SampleDriveConstants.TRACK_WIDTH, SampleDriveConstants.TRACK_WIDTH, SampleDriveConstants.LATERAL_MULTIPLIER);
+    public MecanumDrivePPV2(HardwareMap hardwareMap, RobotEx.OpModeType type, DriveConstants robotConstants) {
+        super(robotConstants.kV, robotConstants.kA, robotConstants.kStatic, robotConstants.TRACK_WIDTH, robotConstants.TRACK_WIDTH, robotConstants.LATERAL_MULTIPLIER);
+        this.RobotConstants = robotConstants;
 
         /* --------------------------------------- COMMON --------------------------------------- */
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
@@ -92,15 +72,15 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
 
         motors = Arrays.asList(frontLeft, frontRight, rearLeft, rearRight);
 
-        if (SampleDriveConstants.RUN_USING_ENCODER) setMode(MotorExEx.RunMode.VelocityControl);
+        if (RobotConstants.RUN_USING_ENCODER) setMode(MotorExEx.RunMode.VelocityControl);
 
 
         setZeroPowerBehavior(MotorExEx.ZeroPowerBehavior.BRAKE);
 
-        if (SampleDriveConstants.RUN_USING_ENCODER && SampleDriveConstants.MOTOR_VELO_PID != null) {
-            setPIDFCoefficients(SampleDriveConstants.KP, SampleDriveConstants.KI, SampleDriveConstants.KD, SampleDriveConstants.kStatic, SampleDriveConstants.kV, SampleDriveConstants.kA);
+        if (RobotConstants.RUN_USING_ENCODER && RobotConstants.MOTOR_VELO_PID != null) {
+            setPIDFCoefficients(RobotConstants.KP, RobotConstants.KI, RobotConstants.KD, RobotConstants.kStatic, RobotConstants.kV, RobotConstants.kA);
 
-            if (!SampleDriveConstants.COMMON_FEED_FORWARD) {
+            if (!RobotConstants.COMMON_FEED_FORWARD) {
                 frontLeft.setFeedforwardCoefficients(150, 1.1, 0);//2795
                 frontRight.setFeedforwardCoefficients(120, 0.97, 0);//2795
                 rearLeft.setFeedforwardCoefficients(120, 1, 0);//2795
@@ -110,23 +90,45 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
 
         if (type == AUTO) {
             /* ----------------------------------- AUTONOMOUS ----------------------------------- */
-            setMotorsInverted(SampleDriveConstants.frontLeftAutonomousInverted, SampleDriveConstants.frontRightAutonomousInverted, SampleDriveConstants.rearRightAutonomousInverted, SampleDriveConstants.rearLeftAutonomousInverted);
-            follower = new HolonomicPIDVAFollower(SampleDriveConstants.TRANSLATIONAL_PID, SampleDriveConstants.TRANSLATIONAL_PID, SampleDriveConstants.HEADING_PID,
+            setMotorsInverted(RobotConstants.frontLeftAutonomousInverted, RobotConstants.frontRightAutonomousInverted, RobotConstants.rearRightAutonomousInverted, RobotConstants.rearLeftAutonomousInverted);
+            follower = new HolonomicPIDVAFollower(RobotConstants.TRANSLATIONAL_PID, RobotConstants.TRANSLATIONAL_PID, RobotConstants.HEADING_PID,
                     new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
             // TODO: if desired, use setLocalizer() to change the localization method
             trajectorySequenceRunner = new TrajectorySequenceRunner(
-                    follower, SampleDriveConstants.HEADING_PID
+                    follower, RobotConstants.HEADING_PID
             );
         } else if (type == TELEOP) {
             /* ------------------------------------- TELEOP ------------------------------------- */
             CommandScheduler.getInstance().registerSubsystem(this);
-            setMotorsInverted(SampleDriveConstants.frontLeftInverted, SampleDriveConstants.frontRightInverted, SampleDriveConstants.rearRightInverted, SampleDriveConstants.rearLeftInverted);
+            setMotorsInverted(RobotConstants.frontLeftInverted, RobotConstants.frontRightInverted, RobotConstants.rearRightInverted, RobotConstants.rearLeftInverted);
             drive = new com.arcrobotics.ftclib.drivebase.MecanumDrive(
                     frontLeft, frontRight, rearLeft, rearRight
             );
         }
     }
+    /* ----------------------------------------- COMMON ----------------------------------------- */
+    public static double VX_WEIGHT = 1;
+    public static double VY_WEIGHT = 1;
+    public static double OMEGA_WEIGHT = 1;
+    private MotorExEx frontLeft, frontRight, rearRight, rearLeft;
+    private IMU imu;
+    private List<MotorExEx> motors;
+    private VoltageSensor batteryVoltageSensor;
+
+    /* ----------------------------------------- TELEOP ----------------------------------------- */
+    protected String m_name = this.getClass().getSimpleName();
+    private com.arcrobotics.ftclib.drivebase.MecanumDrive drive;
+
+    /* --------------------------------------- AUTONOMOUS --------------------------------------- */
+    private TrajectorySequenceRunner trajectorySequenceRunner;
+    private static TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(
+            RobotConstants.MAX_VEL, RobotConstants.MAX_ANG_VEL, RobotConstants.TRACK_WIDTH
+    );
+    private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(RobotConstants.MAX_ACCEL);
+    private TrajectoryFollower follower;
+    private List<Integer> lastEncPositions = new ArrayList<>();
+    private List<Integer> lastEncVels = new ArrayList<>();
 
     public String getName()
     {
@@ -146,7 +148,7 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
     }
     void drive(double strafeSpeed, double forwardSpeed, double turnSpeed, double heading, double fast_input, double slow_input)
     {
-        drive.setMaxSpeed(SampleDriveConstants.DEFAULT_SPEED_PERC + fast_input * SampleDriveConstants.FAST_SPEED_PERC - slow_input * SampleDriveConstants.SLOW_SPEED_PERC);
+        drive.setMaxSpeed(RobotConstants.DEFAULT_SPEED_PERC + fast_input * RobotConstants.FAST_SPEED_PERC - slow_input * RobotConstants.SLOW_SPEED_PERC);
         drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, heading);
     }
     public void setMotorsInverted(
@@ -176,7 +178,7 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
         return new TrajectorySequenceBuilder(
                 startPose,
                 VEL_CONSTRAINT, ACCEL_CONSTRAINT,
-                SampleDriveConstants.MAX_ANG_VEL, SampleDriveConstants.MAX_ANG_ACCEL
+                RobotConstants.MAX_ANG_VEL, RobotConstants.MAX_ANG_ACCEL
         );
     }
     public void turnAsync(double angle)
@@ -248,7 +250,7 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
         double batteryPercentage = 12 / batteryVoltageSensor.getVoltage();
 
         for (MotorExEx motor : motors) {
-            motor.setIntegralBounds(SampleDriveConstants.minIntegralBound, SampleDriveConstants.maxIntegralBound);
+            motor.setIntegralBounds(RobotConstants.minIntegralBound, RobotConstants.maxIntegralBound);
             motor.setFeedforwardCoefficients(kF * batteryPercentage, kV * batteryPercentage, kA);
             motor.setVeloCoefficients(kP, kI, kD);
         }
@@ -283,7 +285,7 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
         for (MotorExEx motor : motors) {
             int position = motor.getCurrentPosition();
             lastEncPositions.add(position);
-            wheelPositions.add(SampleDriveConstants.encoderTicksToInches(position));
+            wheelPositions.add(RobotConstants.encoderTicksToInches(position));
         }
         return wheelPositions;
     }
@@ -296,7 +298,7 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
         for (MotorExEx motor : motors) {
             int vel = (int) motor.getVelocity();
             lastEncVels.add(vel);
-            wheelVelocities.add(SampleDriveConstants.encoderTicksToInches(vel));
+            wheelVelocities.add(RobotConstants.encoderTicksToInches(vel));
         }
         return wheelVelocities;
     }

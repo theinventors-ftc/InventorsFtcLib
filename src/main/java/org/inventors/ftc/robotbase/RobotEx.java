@@ -38,17 +38,17 @@ public class RobotEx {
     protected IMUSubsystem gyro;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
+    public RobotEx(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
                    GamepadExEx toolOp) {
-        this(hardwareMap, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, false);
+        this(hardwareMap, RobotConstants, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, false);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
+    public RobotEx(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
                    GamepadExEx toolOp, OpModeType type, Boolean initCamera, Boolean useCameraFollower
     ) {
         this.initCamera = initCamera;
-        initCommon(hardwareMap, telemetry, type);
+        initCommon(hardwareMap, RobotConstants, telemetry, type);
         if (type == OpModeType.TELEOP) {
             initTele(hardwareMap, driverOp, toolOp, useCameraFollower);
             opModeType = OpModeType.TELEOP;
@@ -58,7 +58,7 @@ public class RobotEx {
         }
     }
 
-    public void initCommon(HardwareMap hardwareMap, Telemetry telemetry, OpModeType type) {
+    public void initCommon(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, OpModeType type) {
         //////////////////////////////////////// Telemetries ///////////////////////////////////////
         dashboard = FtcDashboard.getInstance();
         this.telemetrySubsystem = new TelemetrySubsystem(telemetry, dashboard.getTelemetry());
@@ -73,7 +73,7 @@ public class RobotEx {
             camera = new Camera(hardwareMap, dashboard);
 //                    () -> this.driverOp.getButton(GamepadKeys.Button.BACK));
         }
-        drive = new MecanumDrivePPV2(hardwareMap, type);
+        drive = new MecanumDrivePPV2(hardwareMap, type, RobotConstants);
     }
 
     public void initAuto(HardwareMap hardwareMap) {

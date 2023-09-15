@@ -20,6 +20,47 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 @Config
 public class SampleDriveConstants {
 
+    public static double kA = 0;
+    public static double kStatic = 0;
+
+    public static boolean COMMON_FEED_FORWARD = false;
+
+    public static double MAX_VEL = 50.98709507678554;
+    public static double MAX_ACCEL = 35;
+    public static double MAX_ANG_VEL = 2.3416948318481445;
+    public static double MAX_ANG_ACCEL = Math.toRadians(279.98601117318435);
+
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7.5, 0, 0.05);
+    public static double KP = 1.1;
+    /*
+     * These values are used to generate the trajectories for you robot. To ensure proper operation,
+     * the constraints should never exceed ~80% of the robot's actual capabilities. While Road
+     * Runner is designed to enable faster autonomous motion, it is a good idea for testing to start
+     * small and gradually increase them later after everything is working. All distance units are
+     * inches.
+     */
+    /*
+     * Note from LearnRoadRunner.com:
+     * The velocity and acceleration constraints were calculated based on the following equation:
+     * ((MAX_RPM / 60) * GEAR_RATIO * WHEEL_RADIUS * 2 * Math.PI) * 0.85
+     * Resulting in 52.48291908330528 in/s.
+     * This is only 85% of the theoretical maximum velocity of the bot, following the recommendation above.
+     * This is capped at 85% because there are a number of variables that will prevent your bot from actually
+     * reaching this maximum velocity: voltage dropping over the game, bot weight, general mechanical inefficiencies, etc.
+     * However, you can push this higher yourself if you'd like. Perhaps raise it to 90-95% of the theoretically
+     * max velocity. The theoretically maximum velocity is 61.74461068624151 in/s.
+     * Just make sure that your bot can actually reach this maximum velocity. Path following will be detrimentally
+     * affected if it is aiming for a velocity not actually possible.
+     *
+     * The maximum acceleration is somewhat arbitrary and it is recommended that you tweak this yourself based on
+     * actual testing. Just set it at a reasonable value and keep increasing until your path following starts
+     * to degrade. As of now, it simply mirrors the velocity, resulting in 52.48291908330528 in/s/s
+     *
+     * Maximum Angular Velocity is calculated as: maximum velocity / trackWidth * (180 / Math.PI) but capped at 360°/s.
+     * You are free to raise this on your own if you would like. It is best determined through experimentation.
+
+     */
     /*
      * These are motor constants that should be listed online for your motors.
      */
@@ -56,47 +97,6 @@ public class SampleDriveConstants {
      * empirically tuned.
      */
     public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
-    public static double kA = 0;
-    public static double kStatic = 0;
-
-    public static boolean COMMON_FEED_FORWARD = false;
-
-    /*
-     * These values are used to generate the trajectories for you robot. To ensure proper operation,
-     * the constraints should never exceed ~80% of the robot's actual capabilities. While Road
-     * Runner is designed to enable faster autonomous motion, it is a good idea for testing to start
-     * small and gradually increase them later after everything is working. All distance units are
-     * inches.
-     */
-    /*
-     * Note from LearnRoadRunner.com:
-     * The velocity and acceleration constraints were calculated based on the following equation:
-     * ((MAX_RPM / 60) * GEAR_RATIO * WHEEL_RADIUS * 2 * Math.PI) * 0.85
-     * Resulting in 52.48291908330528 in/s.
-     * This is only 85% of the theoretical maximum velocity of the bot, following the recommendation above.
-     * This is capped at 85% because there are a number of variables that will prevent your bot from actually
-     * reaching this maximum velocity: voltage dropping over the game, bot weight, general mechanical inefficiencies, etc.
-     * However, you can push this higher yourself if you'd like. Perhaps raise it to 90-95% of the theoretically
-     * max velocity. The theoretically maximum velocity is 61.74461068624151 in/s.
-     * Just make sure that your bot can actually reach this maximum velocity. Path following will be detrimentally
-     * affected if it is aiming for a velocity not actually possible.
-     *
-     * The maximum acceleration is somewhat arbitrary and it is recommended that you tweak this yourself based on
-     * actual testing. Just set it at a reasonable value and keep increasing until your path following starts
-     * to degrade. As of now, it simply mirrors the velocity, resulting in 52.48291908330528 in/s/s
-     *
-     * Maximum Angular Velocity is calculated as: maximum velocity / trackWidth * (180 / Math.PI) but capped at 360°/s.
-     * You are free to raise this on your own if you would like. It is best determined through experimentation.
-
-     */
-    public static double MAX_VEL = 50.98709507678554;
-    public static double MAX_ACCEL = 35;
-    public static double MAX_ANG_VEL = 2.3416948318481445;
-    public static double MAX_ANG_ACCEL = Math.toRadians(279.98601117318435);
-
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7.5, 0, 0.05);
-    public static double KP = 1.1;
     public static double KI = 2.7;
     public static double KD = 0;
     public static double minIntegralBound = -400;
