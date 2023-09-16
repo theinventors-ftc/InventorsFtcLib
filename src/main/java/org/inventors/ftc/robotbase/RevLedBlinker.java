@@ -118,14 +118,14 @@ public class RevLedBlinker{
         setPattern(currPattern);
     }
 
-    public RevBlinkinLedDriver.BlinkinPattern getPattern()
-    {
-        return currPattern;
-    }
-
     public void setPattern(RevBlinkinLedDriver.BlinkinPattern pattern)
     {
         currPattern = pattern == null ? offPattern : pattern;
         blinkinLedDriver.setPattern(currPattern);
+    }
+
+    public RevBlinkinLedDriver.BlinkinPattern getPattern()
+    {
+        return currPattern;
     }
 }

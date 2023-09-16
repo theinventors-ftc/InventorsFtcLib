@@ -12,6 +12,11 @@ public class GamepadExEx extends GamepadEx {
         super(gp);
     }
 
+    public GamepadExEx(Gamepad gp, Gamepad.RumbleEffect effect) {
+        super(gp);
+        this.rumbleEffect = effect;
+    }
+
     public void rumble() {
         gamepad.runRumbleEffect(rumbleEffect);
     }
