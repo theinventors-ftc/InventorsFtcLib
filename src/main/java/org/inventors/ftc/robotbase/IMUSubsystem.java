@@ -17,14 +17,18 @@ public class IMUSubsystem extends SubsystemBase {
     private double[] angles;
     private TelemetrySubsystem telemetrySubsystem;
 
-    public IMUSubsystem(HardwareMap hardwareMap) {
+    public IMUSubsystem(HardwareMap hardwareMap, double currentYaw) {
         imu = new RevIMU(hardwareMap);
-        imu.init();
+        imu.init(currentYaw);
 
         telemetrySubsystem.addMonitor("Gyro Yaw", () -> rawYaw);
         telemetrySubsystem.addMonitor("Gyro Pitch", () -> rawPitch);
         telemetrySubsystem.addMonitor("Gyro Roll", () -> rawRoll);
         telemetrySubsystem.addMonitor("Continuous Gyro Value", () -> contYaw);
+    }
+
+    public IMUSubsystem(HardwareMap hardwareMap) {
+        this(hardwareMap, 0);
     }
 
     public void periodic() {
@@ -50,6 +54,10 @@ public class IMUSubsystem extends SubsystemBase {
 
     public double getRoll() {
         return rawRoll;
+    }
+
+    public void setYawOrientation(double yawOrientation) {
+        imu.setYawOrientation(yawOrientation);
     }
 
     public int findClosestOrientationTarget() {

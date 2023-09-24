@@ -3,13 +3,9 @@ package org.inventors.ftc.robotbase;
 import com.arcrobotics.ftclib.hardware.HardwareDevice;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.hardware.bosch.BHI260IMU;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -62,13 +58,27 @@ public class RevIMU implements HardwareDevice {
     /**
      * Initializes gyro with default parameters.
      */
-    public void init() {
+    public void init(double currentYaw) {
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
 
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
-        IMU.Parameters parameters = new IMU.Parameters(orientationOnRobot);
+        Orientation imuOrientation = orientationOnRobot.imuRotationOffset().toOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+        IMU.Parameters parameters = new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        new Orientation(
+                                AxesReference.INTRINSIC,
+                                AxesOrder.XYZ,
+                                AngleUnit.DEGREES,
+                                imuOrientation.firstAngle,
+                                imuOrientation.secondAngle,
+                                imuOrientation.thirdAngle + (float)currentYaw,
+                                0  // acquisitionTime, not used
+                        )
+                )
+        );
 
 //        parameters.angleUnit = IMU.AngleUnit.DEGREES;
 //        parameters.accelUnit = IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -119,6 +129,7 @@ public class RevIMU implements HardwareDevice {
 //    }
 
     public void resetYaw() {
+        offset = 0;
         revIMU.resetYaw();
     }
 
@@ -130,13 +141,17 @@ public class RevIMU implements HardwareDevice {
         rollOffset = revIMU.getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES);
     }
 
+    public void setYawOrientation(double yawOrientation) {
+        offset = -yawOrientation;
+    }
+
     /**
      * @return X, Y, Z angles of gyro
      */
     public double[] getYawPitchRoll() {
         // make a singular hardware call
         YawPitchRollAngles ypr_angles = revIMU.getRobotYawPitchRollAngles();
-        return new double[]{ypr_angles.getYaw(AngleUnit.DEGREES),
+        return new double[]{ypr_angles.getYaw(AngleUnit.DEGREES) - offset,
                 ypr_angles.getPitch(AngleUnit.DEGREES) - pitchOffset, ypr_angles.getRoll(AngleUnit.DEGREES) - rollOffset};
     }
 

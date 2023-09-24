@@ -4,7 +4,6 @@ import android.util.Pair;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 
-import org.checkerframework.common.util.report.qual.ReportOverride;
 import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -16,8 +15,6 @@ public class TelemetrySubsystem extends SubsystemBase {
 
     public TelemetrySubsystem(Telemetry dhTelemetry,Telemetry dashTelemetry) {
         telemetries = new Telemetry[]{dhTelemetry, dashTelemetry};
-//        telemetries[0] = dhTelemetry;
-//        telemetries[1] = dashTelemetry;
     }
 
     public void addMonitor(String caption, Supplier value) {
