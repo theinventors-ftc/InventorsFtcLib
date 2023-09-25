@@ -1,4 +1,4 @@
-package org.inventors.ftc.robotbase;
+package org.inventors.ftc.robotbase.Hardware;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;

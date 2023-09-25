@@ -1,10 +1,12 @@
-package org.inventors.ftc.robotbase;
+package org.inventors.ftc.robotbase.Driving;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.inventors.ftc.robotbase.Hardware.MotorExEx;
 
 public class MecanumDriveSubsystem  extends SubsystemBase {
     private final MotorExEx frontLeft, frontRight, rearRight, rearLeft;
