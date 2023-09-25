@@ -1,4 +1,4 @@
-package org.inventors.ftc.robotbase.Sensors;
+package org.inventors.ftc.robotbase.sensors;
 
 import com.arcrobotics.ftclib.hardware.HardwareDevice;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;

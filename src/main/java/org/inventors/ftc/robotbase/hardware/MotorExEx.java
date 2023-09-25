@@ -1,4 +1,4 @@
-package org.inventors.ftc.robotbase.Hardware;
+package org.inventors.ftc.robotbase.hardware;
 
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;

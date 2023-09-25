@@ -1,4 +1,4 @@
-package org.inventors.ftc.robotbase.Sensors;
+package org.inventors.ftc.robotbase.sensors;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
