@@ -1,8 +1,9 @@
-package org.inventors.ftc.robotbase;
+package org.inventors.ftc.robotbase.sensors;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import org.inventors.ftc.robotbase.util.TelemetrySubsystem;
 
 public class IMUSubsystem extends SubsystemBase {
     private final RevIMU imu;
@@ -17,14 +18,18 @@ public class IMUSubsystem extends SubsystemBase {
     private double[] angles;
     private TelemetrySubsystem telemetrySubsystem;
 
-    public IMUSubsystem(HardwareMap hardwareMap) {
+    public IMUSubsystem(HardwareMap hardwareMap, double currentYaw) {
         imu = new RevIMU(hardwareMap);
-        imu.init();
+        imu.init(currentYaw);
 
         telemetrySubsystem.addMonitor("Gyro Yaw", () -> rawYaw);
         telemetrySubsystem.addMonitor("Gyro Pitch", () -> rawPitch);
         telemetrySubsystem.addMonitor("Gyro Roll", () -> rawRoll);
         telemetrySubsystem.addMonitor("Continuous Gyro Value", () -> contYaw);
+    }
+
+    public IMUSubsystem(HardwareMap hardwareMap) {
+        this(hardwareMap, 0);
     }
 
     public void periodic() {
@@ -50,6 +55,10 @@ public class IMUSubsystem extends SubsystemBase {
 
     public double getRoll() {
         return rawRoll;
+    }
+
+    public void setYawOrientation(double yawOrientation) {
+        imu.setYawOrientation(yawOrientation);
     }
 
     public int findClosestOrientationTarget() {

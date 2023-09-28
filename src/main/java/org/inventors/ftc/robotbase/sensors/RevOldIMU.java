@@ -1,4 +1,4 @@
-package org.inventors.ftc.robotbase;
+package org.inventors.ftc.robotbase.sensors;
 
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.hardware.GyroEx;

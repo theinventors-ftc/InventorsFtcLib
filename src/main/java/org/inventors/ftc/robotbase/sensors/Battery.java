@@ -1,4 +1,4 @@
-package org.inventors.ftc.robotbase;
+package org.inventors.ftc.robotbase.sensors;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;

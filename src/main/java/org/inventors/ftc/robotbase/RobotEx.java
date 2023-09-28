@@ -5,13 +5,23 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.arcrobotics.ftclib.command.CommandBase;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.inventors.ftc.robotbase.drivebase.DriveConstants;
+import org.inventors.ftc.robotbase.drivebase.HeadingControllerSubsystem;
+import org.inventors.ftc.robotbase.drivebase.MecanumDriveCommand;
+import org.inventors.ftc.robotbase.drivebase.MecanumDrivePPV2;
+import org.inventors.ftc.robotbase.sensors.Camera;
+import org.inventors.ftc.robotbase.sensors.IMUSubsystem;
+import org.inventors.ftc.robotbase.hardware.GamepadExEx;
+import org.inventors.ftc.robotbase.util.TelemetrySubsystem;
+
+import java.util.function.BooleanSupplier;
 
 public class RobotEx {
     // enum to specify opmode type
@@ -29,6 +39,8 @@ public class RobotEx {
     protected MecanumDrivePPV2 drive = null;
     protected MecanumDriveCommand driveCommand = null;
 
+    protected Pose2d staticPoseStorage;
+
     public Camera camera;
 
     protected HeadingControllerSubsystem gyroFollow;
@@ -39,46 +51,49 @@ public class RobotEx {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public RobotEx(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
-                   GamepadExEx toolOp) {
-        this(hardwareMap, RobotConstants, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, false);
+                   GamepadExEx toolOp, Pose2d staticPoseStorage, BooleanSupplier autoStopRequested) throws NoSuchFieldException, IllegalAccessException {
+        this(hardwareMap, RobotConstants, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, false, staticPoseStorage, autoStopRequested);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public RobotEx(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
-                   GamepadExEx toolOp, OpModeType type, Boolean initCamera, Boolean useCameraFollower
-    ) {
+                   GamepadExEx toolOp, OpModeType type, Boolean initCamera, Boolean useCameraFollower, Pose2d staticPoseStorage, BooleanSupplier autoStopRequested
+    ) throws NoSuchFieldException, IllegalAccessException {
         this.initCamera = initCamera;
-        initCommon(hardwareMap, RobotConstants, telemetry, type);
+        initCommon(hardwareMap, RobotConstants, telemetry, type, staticPoseStorage);
         if (type == OpModeType.TELEOP) {
             initTele(hardwareMap, driverOp, toolOp, useCameraFollower);
             opModeType = OpModeType.TELEOP;
         } else {
-            initAuto(hardwareMap);
+            initAuto(hardwareMap, autoStopRequested);
             opModeType = OpModeType.AUTO;
         }
     }
 
-    public void initCommon(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, OpModeType type) {
+    public void initCommon(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, OpModeType type, Pose2d staticPoseStorage) {
         //////////////////////////////////////// Telemetries ///////////////////////////////////////
         dashboard = FtcDashboard.getInstance();
         this.telemetrySubsystem = new TelemetrySubsystem(telemetry, dashboard.getTelemetry());
         CommandScheduler.getInstance().registerSubsystem(telemetrySubsystem);
-
-        //////////////////////////////////////////// IMU ///////////////////////////////////////////
-        gyro = new IMUSubsystem(hardwareMap);
-        CommandScheduler.getInstance().registerSubsystem(gyro);
 
         ////////////////////////////////////////// Camera //////////////////////////////////////////
         if (this.initCamera) {
             camera = new Camera(hardwareMap, dashboard);
 //                    () -> this.driverOp.getButton(GamepadKeys.Button.BACK));
         }
+
+        /////////////////////////////////////////// Drive //////////////////////////////////////////
         drive = new MecanumDrivePPV2(hardwareMap, type, RobotConstants);
+
+        /////////////////////////////////////// Pose Storage ///////////////////////////////////////
+        this.staticPoseStorage = staticPoseStorage;
     }
 
-    public void initAuto(HardwareMap hardwareMap) {
+    public void initAuto(HardwareMap hardwareMap, BooleanSupplier isStopRequested) {
         //////////////////////////////////////// Drivetrain ////////////////////////////////////////
 //        SampleMecanumDrive rrDrive = new SampleMecanumDrive(hardwareMap);
+
+        new Trigger(isStopRequested).whenActive(new InstantCommand());
 
         ////////////////////////// Setup and Initialize Mechanisms Objects /////////////////////////
         initMechanismsAutonomous(hardwareMap);
@@ -91,6 +106,10 @@ public class RobotEx {
         this.driverOp = driverOp;
         this.toolOp = toolOp;
 
+        //////////////////////////////////////////// IMU ///////////////////////////////////////////
+        gyro = new IMUSubsystem(hardwareMap, staticPoseStorage.getHeading());
+        CommandScheduler.getInstance().registerSubsystem(gyro);
+
         //////////////////////////////////////// Drivetrain ////////////////////////////////////////
 //        drive = new MecanumDriveSubsystem(hardwareMap, frontLeftInvert, frontRightInvert,
 //                rearLeftInvert, rearRightInvert);
@@ -100,6 +119,7 @@ public class RobotEx {
 
         CommandScheduler.getInstance().registerSubsystem(drive);
         drive.setDefaultCommand(driveCommand);
+
 
         /////////////////////////////////////// Gyro Follower //////////////////////////////////////
         driverOp.getGamepadButton(GamepadKeys.Button.START)
@@ -156,5 +176,10 @@ public class RobotEx {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public double drivetrainTurn() {
         return gyroFollow.isEnabled() ? -gyroFollow.calculateTurn() : driverOp.getRightX();
+    }
+
+    private void stopAndSavePose() {
+        drive.setMotorPowers(0, 0, 0, 0); // TODO: Check this
+        staticPoseStorage = drive.getPoseEstimate();
     }
 }

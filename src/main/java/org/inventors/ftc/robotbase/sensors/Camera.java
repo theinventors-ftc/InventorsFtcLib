@@ -1,8 +1,8 @@
-package org.inventors.ftc.robotbase;
+package org.inventors.ftc.robotbase.sensors;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.inventors.ftc.opencvpipelines.AprilTagDetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;

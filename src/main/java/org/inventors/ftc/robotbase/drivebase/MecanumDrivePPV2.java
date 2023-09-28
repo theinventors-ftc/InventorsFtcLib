@@ -1,4 +1,4 @@
-package org.inventors.ftc.robotbase;
+package org.inventors.ftc.robotbase.drivebase;
 
 import static org.inventors.ftc.robotbase.RobotEx.OpModeType.AUTO;
 import static org.inventors.ftc.robotbase.RobotEx.OpModeType.TELEOP;
@@ -29,6 +29,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.inventors.ftc.robotbase.hardware.MotorExEx;
+import org.inventors.ftc.robotbase.RobotEx;
 import org.inventors.ftc.trajectorysequence.TrajectorySequence;
 import org.inventors.ftc.trajectorysequence.TrajectorySequenceBuilder;
 import org.inventors.ftc.trajectorysequence.TrajectorySequenceRunner;
