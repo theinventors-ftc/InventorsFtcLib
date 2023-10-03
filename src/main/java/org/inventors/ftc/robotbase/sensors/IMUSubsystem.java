@@ -1,13 +1,12 @@
-package org.inventors.ftc.robotbase;
+package org.inventors.ftc.robotbase.sensors;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import org.inventors.ftc.robotbase.util.TelemetrySubsystem;
 
 public class IMUSubsystem extends SubsystemBase {
     private final RevIMU imu;
-    private final Telemetry telemetry;
-    private final Telemetry dashboardTelemetry;
 
     private double previousRawYaw = 0;
     private double turns = 0;
@@ -17,23 +16,21 @@ public class IMUSubsystem extends SubsystemBase {
     private double contYaw;
 
     private double[] angles;
+    private TelemetrySubsystem telemetrySubsystem;
 
-    public IMUSubsystem(HardwareMap hardwareMap, Telemetry telemetry,
-                        Telemetry dashboardTelemetry) {
+    public IMUSubsystem(HardwareMap hardwareMap, double currentYaw) {
         imu = new RevIMU(hardwareMap);
-        imu.init();
-//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-//        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-//        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-//        parameters.loggingEnabled = true;
-//        parameters.loggingTag = "IMU";
-//        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu.init(currentYaw);
 
-        this.telemetry = telemetry;
-        this.dashboardTelemetry = dashboardTelemetry;
+        telemetrySubsystem.addMonitor("Gyro Yaw", () -> rawYaw);
+        telemetrySubsystem.addMonitor("Gyro Pitch", () -> rawPitch);
+        telemetrySubsystem.addMonitor("Gyro Roll", () -> rawRoll);
+        telemetrySubsystem.addMonitor("Continuous Gyro Value", () -> contYaw);
     }
-//        That is inside init!!
+
+    public IMUSubsystem(HardwareMap hardwareMap) {
+        this(hardwareMap, 0);
+    }
 
     public void periodic() {
         angles = imu.getYawPitchRoll();
@@ -42,16 +39,6 @@ public class IMUSubsystem extends SubsystemBase {
         rawRoll = angles[2];
 
         calculateContinuousValue();
-
-        telemetry.addData("Gyro Yaw:", rawYaw);
-        telemetry.addData("Gyro Pitch:", rawPitch);
-        telemetry.addData("Gyro Roll:", rawRoll);
-        telemetry.addData("Continuous Gyro Value:", contYaw);
-
-        dashboardTelemetry.addData("Raw Gyro Value: ", rawYaw);
-        dashboardTelemetry.addData("Gyro Pitch:", rawPitch);
-        dashboardTelemetry.addData("Gyro Roll:", rawRoll);
-        dashboardTelemetry.addData("Continuous Gyro Value:", contYaw);
     }
 
     public double getYaw() {
@@ -68,6 +55,10 @@ public class IMUSubsystem extends SubsystemBase {
 
     public double getRoll() {
         return rawRoll;
+    }
+
+    public void setYawOrientation(double yawOrientation) {
+        imu.setYawOrientation(yawOrientation);
     }
 
     public int findClosestOrientationTarget() {

@@ -1,5 +1,9 @@
 package org.inventors.ftc.opencvpipelines;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -51,6 +55,7 @@ class RectangleTracking extends OpenCvPipeline
         this.colorSet = colorSet;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public Mat processFrame(Mat input)
     {
@@ -143,7 +148,6 @@ class RectangleTracking extends OpenCvPipeline
 
         telemetry.addData(">", "Element's X:" + this.getElementsAnalogCoordinates()[0]);
         telemetry.addData(">", "Element's Y:" + this.getElementsAnalogCoordinates()[1]);
-        telemetry.update();
 
         return contoursOnFrameMat;
 

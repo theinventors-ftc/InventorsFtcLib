@@ -1,8 +1,8 @@
-package org.inventors.ftc.robotbase;
+package org.inventors.ftc.robotbase.sensors;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.inventors.ftc.opencvpipelines.AprilTagDetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -24,7 +24,7 @@ public class Camera {
     // UNITS ARE METERS
     double tagsize = 0.166;
 
-    public Camera(HardwareMap hardwareMap, FtcDashboard dashboard, Telemetry telemetry) {
+    public Camera(HardwareMap hardwareMap, FtcDashboard dashboard) {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
