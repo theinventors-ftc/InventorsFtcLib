@@ -20,7 +20,7 @@ public class RobotEx {
     }
 
     protected OpModeType opModeType;
-    protected TelemetrySubsystem telemetrySubsystem;
+//    protected TelemetrySubsystem telemetrySubsystem;
     protected FtcDashboard dashboard;
 
     protected GamepadExEx driverOp;
@@ -61,8 +61,8 @@ public class RobotEx {
     public void initCommon(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, OpModeType type) {
         //////////////////////////////////////// Telemetries ///////////////////////////////////////
         dashboard = FtcDashboard.getInstance();
-        this.telemetrySubsystem = new TelemetrySubsystem(telemetry, dashboard.getTelemetry());
-        CommandScheduler.getInstance().registerSubsystem(telemetrySubsystem);
+//        this.telemetrySubsystem = new TelemetrySubsystem(telemetry, dashboard.getTelemetry());
+//        CommandScheduler.getInstance().registerSubsystem(telemetrySubsystem);
 
         //////////////////////////////////////////// IMU ///////////////////////////////////////////
         gyro = new IMUSubsystem(hardwareMap);
