@@ -15,7 +15,7 @@ public class IMUSubsystem extends SubsystemBase {
     private double contYaw;
 
     private double[] angles;
-    private TelemetrySubsystem telemetrySubsystem;
+//    private TelemetrySubsystem telemetrySubsystem;
 
     public IMUSubsystem(HardwareMap hardwareMap) {
         imu = new RevIMU(hardwareMap);
