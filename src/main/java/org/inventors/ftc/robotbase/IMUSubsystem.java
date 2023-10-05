@@ -21,9 +21,9 @@ public class IMUSubsystem extends SubsystemBase {
         imu = new RevIMU(hardwareMap);
         imu.init();
 
-        telemetrySubsystem.addMonitor("Gyro Yaw", () -> rawYaw);
-        telemetrySubsystem.addMonitor("Gyro Pitch", () -> rawPitch);
-        telemetrySubsystem.addMonitor("Gyro Roll", () -> rawRoll);
+        telemetrySubsystem.addMonitor("Gyro Yaw", () -> getRawYaw());
+        telemetrySubsystem.addMonitor("Gyro Pitch", () -> getPitch());
+        telemetrySubsystem.addMonitor("Gyro Roll", () -> getRoll());
         telemetrySubsystem.addMonitor("Continuous Gyro Value", () -> contYaw);
     }
 
