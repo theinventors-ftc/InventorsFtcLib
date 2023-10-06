@@ -1,5 +1,7 @@
 package org.inventors.ftc.robotbase;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -156,5 +158,13 @@ public class RobotEx {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public double drivetrainTurn() {
         return gyroFollow.isEnabled() ? -gyroFollow.calculateTurn() : driverOp.getRightX();
+    }
+
+    public Telemetry getTelemetry() {
+        return telemetry;
+    }
+
+    public Telemetry getDashboardTelemetry() {
+        return dashboard.getTelemetry();
     }
 }
