@@ -6,19 +6,7 @@ import static org.inventors.ftc.robotbase.RobotEx.OpModeType.TELEOP;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.drive.DriveSignal;
-import com.acmerobotics.roadrunner.drive.MecanumDrive;
-import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
-import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
-import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -29,12 +17,9 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.inventors.ftc.roadRunner.MecanumDrive;
 import org.inventors.ftc.robotbase.hardware.MotorExEx;
 import org.inventors.ftc.robotbase.RobotEx;
-import org.inventors.ftc.trajectorysequence.TrajectorySequence;
-import org.inventors.ftc.trajectorysequence.TrajectorySequenceBuilder;
-import org.inventors.ftc.trajectorysequence.TrajectorySequenceRunner;
-import org.inventors.ftc.util.LynxModuleUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,14 +29,11 @@ import java.util.List;
  */
 @Config
 public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
-    static DriveConstants RobotConstants;
 
-    public MecanumDrivePPV2(HardwareMap hardwareMap, RobotEx.OpModeType type, DriveConstants robotConstants) {
-        super(robotConstants.kV, robotConstants.kA, robotConstants.kStatic, robotConstants.TRACK_WIDTH, robotConstants.TRACK_WIDTH, robotConstants.LATERAL_MULTIPLIER);
-        this.RobotConstants = robotConstants;
+    public MecanumDrivePPV2(HardwareMap hardwareMap, RobotEx.OpModeType type, Params params) {
+        this.PARAMS = params;
 
         /* --------------------------------------- COMMON --------------------------------------- */
-        LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
@@ -74,25 +56,11 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
 
         motors = Arrays.asList(frontLeft, frontRight, rearLeft, rearRight);
 
-        if (RobotConstants.RUN_USING_ENCODER) setMode(MotorExEx.RunMode.VelocityControl);
-
-
         setZeroPowerBehavior(MotorExEx.ZeroPowerBehavior.BRAKE);
-
-        if (RobotConstants.RUN_USING_ENCODER && RobotConstants.MOTOR_VELO_PID != null) {
-            setPIDFCoefficients(RobotConstants.KP, RobotConstants.KI, RobotConstants.KD, RobotConstants.kStatic, RobotConstants.kV, RobotConstants.kA);
-
-            if (!RobotConstants.COMMON_FEED_FORWARD) {
-                frontLeft.setFeedforwardCoefficients(150, 1.1, 0);//2795
-                frontRight.setFeedforwardCoefficients(120, 0.97, 0);//2795
-                rearLeft.setFeedforwardCoefficients(120, 1, 0);//2795
-                rearRight.setFeedforwardCoefficients(220, 1.07, 0);//2795
-            }
-        }
 
         if (type == AUTO) {
             /* ----------------------------------- AUTONOMOUS ----------------------------------- */
-            setMotorsInverted(RobotConstants.frontLeftAutonomousInverted, RobotConstants.frontRightAutonomousInverted, RobotConstants.rearRightAutonomousInverted, RobotConstants.rearLeftAutonomousInverted);
+            setMotorsInverted(params.frontLeftAutonomousInverted, RobotConstants.frontRightAutonomousInverted, RobotConstants.rearRightAutonomousInverted, RobotConstants.rearLeftAutonomousInverted);
             follower = new HolonomicPIDVAFollower(RobotConstants.TRANSLATIONAL_PID, RobotConstants.TRANSLATIONAL_PID, RobotConstants.HEADING_PID,
                     new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
