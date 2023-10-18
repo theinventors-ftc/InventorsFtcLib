@@ -46,6 +46,8 @@ import org.inventors.ftc.roadRunner.PoseMessage;
 import org.inventors.ftc.robotbase.RobotEx;
 import org.inventors.ftc.robotbase.hardware.MotorExEx;
 
+import org.inventors.ftc.robotbase.RobotEx;
+
 import java.lang.Math;
 import java.util.Arrays;
 import java.util.LinkedList;

@@ -1,6 +1,17 @@
 package org.inventors.ftc.robotbase;
 
-public class SensoredStallDetection extends Subsystem{
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
+import com.arcrobotics.ftclib.command.Subsystem;
+import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.util.Timing;
+
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
+public class SensoredStallDetection extends SubsystemBase {
 
     long timerLenght;
     Timing.Timer timer = new Timing.Timer(timerLenght);
@@ -32,25 +43,26 @@ public class SensoredStallDetection extends Subsystem{
         this.threshold = threshold;
     }
     
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void periodic(){
         if(frontLeft.getAsBoolean()){
-            if(frontLeftTicks =< threshold){
+            if(frontLeftTicks.getAsDouble() < threshold){
                 stall_detected = true;
             }
         }
         if(frontRight.getAsBoolean()){
-            if(frontRightTicks < threshold){
+            if(frontRightTicks.getAsDouble() < threshold){
                 stall_detected = true;
             }
         }
         if(rearLeft.getAsBoolean()){
-            if(rearLeftTicks < threshold){
+            if(rearLeftTicks.getAsDouble() < threshold){
                 stall_detected = true;
             }
         }
         if(rearRight.getAsBoolean()){
-            if(rearRightTicks < threshold){
+            if(rearRightTicks.getAsDouble() < threshold){
                 stall_detected = true;
             }
         }
