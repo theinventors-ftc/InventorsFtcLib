@@ -134,7 +134,10 @@ public class MecanumDriveSubsystem implements Subsystem {
     /*----------------COMMON----------------*/
 
     private List<MotorExEx> motors;
-    private MotorExEx leftFront, rightFront, rightBack, leftBack;
+    public static MotorExEx leftFront;
+    public static MotorExEx rightFront;
+    public static MotorExEx rightBack;
+    public static MotorExEx leftBack;
 
     /*----------------TELEOP----------------*/
 
@@ -145,10 +148,10 @@ public class MecanumDriveSubsystem implements Subsystem {
     
     public static Params PARAMS = new Params();
 
-    public final MecanumKinematics kinematics = new MecanumKinematics(
+    public static final MecanumKinematics kinematics = new MecanumKinematics(
             PARAMS.inPerTick * PARAMS.trackWidthTicks, PARAMS.inPerTick / PARAMS.lateralInPerTick);
 
-    public final MotorFeedforward feedforward = new MotorFeedforward(PARAMS.kS, PARAMS.kV / PARAMS.inPerTick, PARAMS.kA / PARAMS.inPerTick);
+    public static final MotorFeedforward feedforward = new MotorFeedforward(PARAMS.kS, PARAMS.kV / PARAMS.inPerTick, PARAMS.kA / PARAMS.inPerTick);
 
     public final TurnConstraints defaultTurnConstraints = new TurnConstraints(
             PARAMS.maxAngVel, -PARAMS.maxAngAccel, PARAMS.maxAngAccel);
@@ -160,12 +163,12 @@ public class MecanumDriveSubsystem implements Subsystem {
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 
-    public VoltageSensor voltageSensor;
+    public static VoltageSensor voltageSensor;
     public IMU imu;
-    public Localizer localizer;
-    public Pose2d pose;
+    public static Localizer localizer;
+    public static Pose2d pose;
 
-    private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
+    private static final LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
     public class DriveLocalizer implements Localizer {
         public final Encoder leftFront, leftRear, rightRear, rightFront;
@@ -295,13 +298,12 @@ public class MecanumDriveSubsystem implements Subsystem {
     }
 
 
-    public void setPIDFCoefficients(double kP, double kI, double kD, double kF, double kV, double kA)
+    public void setPIDFCoefficients(double kP, double kI, double kD)
     {
         double batteryPercentage = 12 / voltageSensor.getVoltage();
 
         for (MotorExEx motor : motors) {
             motor.setIntegralBounds(PARAMS.minIntegralBound, PARAMS.maxIntegralBound);
-            motor.setFeedforwardCoefficients(kF * batteryPercentage, kV * batteryPercentage, kA);
             motor.setVeloCoefficients(kP, kI, kD);
         }
     }
@@ -362,7 +364,7 @@ public class MecanumDriveSubsystem implements Subsystem {
         rightFront.set(wheelVels.rightFront.get(0) / maxPowerMag);
     }
 
-    public final class FollowTrajectoryAction implements Action {
+    public static final class FollowTrajectoryAction implements Action {
         public final TimeTrajectory timeTrajectory;
         private double beginTs = -1;
 
@@ -524,7 +526,7 @@ public class MecanumDriveSubsystem implements Subsystem {
         }
     }
 
-    public PoseVelocity2d updatePoseEstimate() {
+    public static PoseVelocity2d updatePoseEstimate() {
         Twist2dDual<Time> twist = localizer.update();
         pose = pose.plus(twist.value());
 
@@ -538,7 +540,7 @@ public class MecanumDriveSubsystem implements Subsystem {
         return twist.velocity().value();
     }
 
-    private void drawPoseHistory(Canvas c) {
+    private static void drawPoseHistory(Canvas c) {
         double[] xPoints = new double[poseHistory.size()];
         double[] yPoints = new double[poseHistory.size()];
 

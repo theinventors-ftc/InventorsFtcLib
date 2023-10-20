@@ -12,13 +12,16 @@ import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.inventors.ftc.roadRunner.PoseMessage;
 import org.inventors.ftc.robotbase.drivebase.HeadingControllerSubsystem;
 import org.inventors.ftc.robotbase.drivebase.MecanumDriveCommand;
 import org.inventors.ftc.robotbase.drivebase.MecanumDrivePPV2;
+import org.inventors.ftc.robotbase.drivebase.MecanumDriveSubsystem;
 import org.inventors.ftc.robotbase.sensors.Camera;
 import org.inventors.ftc.robotbase.sensors.IMUSubsystem;
 import org.inventors.ftc.robotbase.hardware.GamepadExEx;
 import org.inventors.ftc.robotbase.util.TelemetrySubsystem;
+import org.inventors.ftc.roadRunner.PoseMessage.*;
 
 import java.util.function.BooleanSupplier;
 
@@ -35,31 +38,32 @@ public class RobotEx {
     protected GamepadExEx driverOp;
     protected GamepadExEx toolOp;
 
-    protected MecanumDrivePPV2 drive = null;
+    protected MecanumDriveSubsystem drive = null;
     protected MecanumDriveCommand driveCommand = null;
 
-    protected Pose2d staticPoseStorage;
+    protected double staticPoseMessage;
 
     public Camera camera;
 
     protected HeadingControllerSubsystem gyroFollow;
-    protected HeadingControllerSubsystem cameraFollow;
     protected final Boolean initCamera;
 
     protected IMUSubsystem gyro;
 
+    protected Pose2d pose; //To set for when it starts
+
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public RobotEx(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
-                   GamepadExEx toolOp, Pose2d staticPoseStorage, BooleanSupplier autoStopRequested) throws NoSuchFieldException, IllegalAccessException {
-        this(hardwareMap, RobotConstants, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, false, staticPoseStorage, autoStopRequested);
+    public RobotEx(HardwareMap hardwareMap, MecanumDriveSubsystem.Params RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
+                   GamepadExEx toolOp, Double staticPoseMessage, BooleanSupplier autoStopRequested) throws NoSuchFieldException, IllegalAccessException {
+        this(hardwareMap, RobotConstants, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, false, staticPoseMessage, autoStopRequested);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public RobotEx(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
-                   GamepadExEx toolOp, OpModeType type, Boolean initCamera, Boolean useCameraFollower, Pose2d staticPoseStorage, BooleanSupplier autoStopRequested
+    public RobotEx(HardwareMap hardwareMap, MecanumDriveSubsystem.Params RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
+                   GamepadExEx toolOp, OpModeType type, Boolean initCamera, Boolean useCameraFollower, Double staticPoseMessage, BooleanSupplier autoStopRequested
     ) throws NoSuchFieldException, IllegalAccessException {
         this.initCamera = initCamera;
-        initCommon(hardwareMap, RobotConstants, telemetry, type, staticPoseStorage);
+        initCommon(hardwareMap, RobotConstants, telemetry, type, staticPoseMessage);
         if (type == OpModeType.TELEOP) {
             initTele(hardwareMap, driverOp, toolOp, useCameraFollower);
             opModeType = OpModeType.TELEOP;
@@ -69,7 +73,7 @@ public class RobotEx {
         }
     }
 
-    public void initCommon(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, OpModeType type, Pose2d staticPoseStorage) {
+    public void initCommon(HardwareMap hardwareMap, MecanumDriveSubsystem.Params RobotConstants, Telemetry telemetry, OpModeType type, Double staticPoseMessage) {
         //////////////////////////////////////// Telemetries ///////////////////////////////////////
         dashboard = FtcDashboard.getInstance();
         this.telemetrySubsystem = new TelemetrySubsystem(telemetry, dashboard.getTelemetry());
@@ -82,10 +86,10 @@ public class RobotEx {
         }
 
         /////////////////////////////////////////// Drive //////////////////////////////////////////
-        drive = new MecanumDrivePPV2(hardwareMap, type, RobotConstants);
+        drive = new MecanumDriveSubsystem(hardwareMap, pose ,type);
 
         /////////////////////////////////////// Pose Storage ///////////////////////////////////////
-        this.staticPoseStorage = staticPoseStorage;
+        this.staticPoseMessage = staticPoseMessage;
     }
 
     public void initAuto(HardwareMap hardwareMap, BooleanSupplier isStopRequested) {
@@ -106,7 +110,7 @@ public class RobotEx {
         this.toolOp = toolOp;
 
         //////////////////////////////////////////// IMU ///////////////////////////////////////////
-        gyro = new IMUSubsystem(hardwareMap, staticPoseStorage.getHeading());
+        gyro = new IMUSubsystem(hardwareMap, staticPoseMessage);
         CommandScheduler.getInstance().registerSubsystem(gyro);
 
         //////////////////////////////////////// Drivetrain ////////////////////////////////////////
@@ -178,7 +182,11 @@ public class RobotEx {
     }
 
     private void stopAndSavePose() {
-        drive.setMotorPowers(0, 0, 0, 0); // TODO: Check this
-        staticPoseStorage = drive.getPoseEstimate();
+        drive.leftFront.set(0);
+        drive.leftBack.set(0);
+        drive.rightFront.set(0);
+        drive.rightBack.set(0);
+        // TODO: Check this
+        staticPoseMessage = drive.updatePoseEstimate();
     }
 }
