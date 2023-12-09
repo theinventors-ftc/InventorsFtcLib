@@ -15,7 +15,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.inventors.ftc.roadRunner.PoseMessage;
 import org.inventors.ftc.robotbase.drivebase.HeadingControllerSubsystem;
 import org.inventors.ftc.robotbase.drivebase.MecanumDriveCommand;
-import org.inventors.ftc.robotbase.drivebase.MecanumDrivePPV2;
 import org.inventors.ftc.robotbase.drivebase.MecanumDriveSubsystem;
 import org.inventors.ftc.robotbase.sensors.Camera;
 import org.inventors.ftc.robotbase.sensors.IMUSubsystem;
@@ -187,6 +186,6 @@ public class RobotEx {
         drive.rightFront.set(0);
         drive.rightBack.set(0);
         // TODO: Check this
-        staticPoseMessage = drive.updatePoseEstimate();
+//        staticPoseMessage = drive.updatePoseEstimate();
     }
 }
