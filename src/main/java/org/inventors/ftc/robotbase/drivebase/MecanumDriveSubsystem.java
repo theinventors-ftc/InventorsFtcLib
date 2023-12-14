@@ -61,9 +61,9 @@ public class MecanumDriveSubsystem implements Subsystem {
     public static class Params {
         /* ---------------------------------- MOTOR PARAMETERS ---------------------------------- */
         // feedforward parameters (in tick units)
-        public double kS = 0;
-        public double kV = 0;
-        public double kA = 0;
+        public double kS = 0.1;
+        public double kV = 0.02;
+        public double kA = 0.0002;
 
         public static final double MAX_RPM = 312;
 
