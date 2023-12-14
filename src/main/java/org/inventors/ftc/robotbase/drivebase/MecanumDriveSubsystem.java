@@ -278,7 +278,7 @@ public class MecanumDriveSubsystem implements Subsystem {
 
             localizer = new DriveLocalizer();
 
-            FlightRecorder.write("MECANUM_PARAMS", PARAMS);
+//            FlightRecorder.write("MECANUM_PARAMS", PARAMS);
         } else if (type == TELEOP) {
             /* ------------------------------------- TELEOP ------------------------------------- */
             CommandScheduler.getInstance().registerSubsystem(this);
