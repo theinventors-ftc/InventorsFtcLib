@@ -1,8 +1,7 @@
-package org.inventors.ftc.robotbase;
+package org.inventors.ftc.robotbase.hardware;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class IMUSubsystem extends SubsystemBase {
     private final RevIMU imu;

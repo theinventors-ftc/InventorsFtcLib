@@ -1,4 +1,4 @@
-package org.inventors.ftc.robotbase;
+package org.inventors.ftc.robotbase.drive;
 
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -7,7 +7,10 @@ public class DriveConstants {
     public static double kA = 0;
     public static double kStatic = 0;
 
-    public static boolean COMMON_FEED_FORWARD = false;
+    public static double[] frontLeftFeedForward = {0, 1, 0};
+    public static double[] frontRightFeedForward = {0, 1, 0};
+    public static double[] rearLeftFeedForward = {0, 1, 0};
+    public static double[] rearRightFeedForward = {0, 1, 0};
 
     public static double MAX_VEL = 50.98709507678554;
     public static double MAX_ACCEL = 35;
@@ -39,13 +42,13 @@ public class DriveConstants {
     public static boolean frontLeftInverted = true, frontRightInverted = true, rearRightInverted = true, rearLeftInverted = true;
     public static boolean frontLeftAutonomousInverted = true, frontRightAutonomousInverted = false, rearRightAutonomousInverted = false, rearLeftAutonomousInverted = true;
 
-    public static double encoderTicksToInches(double ticks) {
-        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
-    }
-
     public static double DEFAULT_SPEED_PERC = 0.6;
     public static double FAST_SPEED_PERC = 1;
     public static double SLOW_SPEED_PERC = 0.3;
+
+    public static double encoderTicksToInches(double ticks) {
+        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+    }
 
     public static double rpmToVelocity(double rpm) {
         return rpm * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0;

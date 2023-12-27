@@ -1,4 +1,4 @@
-package org.inventors.ftc;
+package org.inventors.ftc.util;
 
 public class MathUtils {
     private MathUtils() {
