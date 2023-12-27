@@ -1,4 +1,4 @@
-package org.inventors.ftc.robotbase;
+package org.inventors.ftc.robotbase.drive;
 
 import android.os.Build;
 
@@ -9,10 +9,10 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import java.util.function.DoubleSupplier;
 
 public class MecanumDriveCommand extends CommandBase {
-    private final MecanumDrivePPV2 drivetrain;
+    private final MecanumDriveSubsystem drivetrain;
     private final DoubleSupplier forwardSpeed, strafeSpeed, turnSpeed, heading, slowTrigger, fastTrigger;
 
-    public MecanumDriveCommand(MecanumDrivePPV2 drivetrain, DoubleSupplier forwardSpeed,
+    public MecanumDriveCommand(MecanumDriveSubsystem drivetrain, DoubleSupplier forwardSpeed,
                                DoubleSupplier strafeSpeed, DoubleSupplier turnSpeed,
                                DoubleSupplier heading, DoubleSupplier fastTrigger, DoubleSupplier slowTrigger) {
         this.drivetrain = drivetrain;

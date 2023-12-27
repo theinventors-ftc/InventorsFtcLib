@@ -1,4 +1,4 @@
-package org.inventors.ftc.robotbase;
+package org.inventors.ftc.robotbase.drive;
 
 import static org.inventors.ftc.robotbase.RobotEx.OpModeType.AUTO;
 import static org.inventors.ftc.robotbase.RobotEx.OpModeType.TELEOP;
@@ -29,6 +29,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.inventors.ftc.robotbase.hardware.MotorExEx;
+import org.inventors.ftc.robotbase.RobotEx;
 import org.inventors.ftc.trajectorysequence.TrajectorySequence;
 import org.inventors.ftc.trajectorysequence.TrajectorySequenceBuilder;
 import org.inventors.ftc.trajectorysequence.TrajectorySequenceRunner;
@@ -41,10 +43,10 @@ import java.util.List;
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
+public class MecanumDriveSubsystem extends MecanumDrive implements Subsystem {
     static DriveConstants RobotConstants;
 
-    public MecanumDrivePPV2(HardwareMap hardwareMap, RobotEx.OpModeType type, DriveConstants robotConstants) {
+    public MecanumDriveSubsystem(HardwareMap hardwareMap, RobotEx.OpModeType type, DriveConstants robotConstants) {
         super(robotConstants.kV, robotConstants.kA, robotConstants.kStatic, robotConstants.TRACK_WIDTH, robotConstants.TRACK_WIDTH, robotConstants.LATERAL_MULTIPLIER);
         this.RobotConstants = robotConstants;
 
@@ -78,14 +80,30 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
         setZeroPowerBehavior(MotorExEx.ZeroPowerBehavior.BRAKE);
 
         if (RobotConstants.RUN_USING_ENCODER && RobotConstants.MOTOR_VELO_PID != null) {
-            setPIDFCoefficients(RobotConstants.KP, RobotConstants.KI, RobotConstants.KD, RobotConstants.kStatic, RobotConstants.kV, RobotConstants.kA);
+            setPIDFCoefficients(RobotConstants.KP, RobotConstants.KI, RobotConstants.KD);
 
-            if (!RobotConstants.COMMON_FEED_FORWARD) {
-                frontLeft.setFeedforwardCoefficients(150, 1.1, 0);//2795
-                frontRight.setFeedforwardCoefficients(120, 0.97, 0);//2795
-                rearLeft.setFeedforwardCoefficients(120, 1, 0);//2795
-                rearRight.setFeedforwardCoefficients(220, 1.07, 0);//2795
-            }
+            double batteryPercentage = 12 / batteryVoltageSensor.getVoltage();
+
+            frontLeft.setFeedforwardCoefficients(
+                    RobotConstants.frontLeftFeedForward[0],
+                    RobotConstants.frontLeftFeedForward[1],
+                    RobotConstants.frontLeftFeedForward[2]
+            );
+            frontRight.setFeedforwardCoefficients(
+                    RobotConstants.frontRightFeedForward[0],
+                    RobotConstants.frontRightFeedForward[1],
+                    RobotConstants.frontRightFeedForward[2]
+            );
+            rearLeft.setFeedforwardCoefficients(
+                    RobotConstants.rearLeftFeedForward[0],
+                    RobotConstants.rearLeftFeedForward[1],
+                    RobotConstants.rearLeftFeedForward[2]
+            );
+            rearRight.setFeedforwardCoefficients(
+                    RobotConstants.rearRightFeedForward[0],
+                    RobotConstants.rearRightFeedForward[1],
+                    RobotConstants.rearRightFeedForward[2]
+            );
         }
 
         if (type == AUTO) {
@@ -245,13 +263,10 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
         for (MotorExEx motor : motors)
             motor.setZeroPowerBehavior(zeroPowerBehavior);
     }
-    public void setPIDFCoefficients(double kP, double kI, double kD, double kF, double kV, double kA)
+    public void setPIDFCoefficients(double kP, double kI, double kD)
     {
-        double batteryPercentage = 12 / batteryVoltageSensor.getVoltage();
-
         for (MotorExEx motor : motors) {
             motor.setIntegralBounds(RobotConstants.minIntegralBound, RobotConstants.maxIntegralBound);
-            motor.setFeedforwardCoefficients(kF * batteryPercentage, kV * batteryPercentage, kA);
             motor.setVeloCoefficients(kP, kI, kD);
         }
     }
