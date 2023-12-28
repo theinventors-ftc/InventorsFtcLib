@@ -19,7 +19,11 @@ public class DriveConstants {
 
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(7.5, 0, 0.05);
-    public static double KP = 1.1;
+    public static double VELO_KP = 1.1;
+    public static double VELO_KI = 2.7;
+    public static double VELO_KD = 0;
+    public static double minIntegralBound = -400;
+    public static double maxIntegralBound = 400;
 
     public static double TICKS_PER_REV = 537.6;
     public static double MAX_RPM = 312;
@@ -32,10 +36,6 @@ public class DriveConstants {
     public static double TRACK_WIDTH = 11.54; // in
 
     public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
-    public static double KI = 2.7;
-    public static double KD = 0;
-    public static double minIntegralBound = -400;
-    public static double maxIntegralBound = 400;
 
     public static double LATERAL_MULTIPLIER = 1.17602326;
 

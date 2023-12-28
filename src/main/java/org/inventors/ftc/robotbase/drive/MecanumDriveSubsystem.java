@@ -80,7 +80,7 @@ public class MecanumDriveSubsystem extends MecanumDrive implements Subsystem {
         setZeroPowerBehavior(MotorExEx.ZeroPowerBehavior.BRAKE);
 
         if (RobotConstants.RUN_USING_ENCODER && RobotConstants.MOTOR_VELO_PID != null) {
-            setPIDFCoefficients(RobotConstants.KP, RobotConstants.KI, RobotConstants.KD);
+            setPIDFCoefficients(RobotConstants.VELO_KP, RobotConstants.VELO_KI, RobotConstants.VELO_KD);
 
             double batteryPercentage = 12 / batteryVoltageSensor.getVoltage();
 
