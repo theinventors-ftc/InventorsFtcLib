@@ -21,10 +21,10 @@ public class DriveConstants {
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(7.5, 0, 0.05);
     public static double KP = 1.1;
 
-    public static final double TICKS_PER_REV = 537.6;
-    public static final double MAX_RPM = 312;
+    public static double TICKS_PER_REV = 537.6;
+    public static double MAX_RPM = 312;
 
-    public static final boolean RUN_USING_ENCODER = true;
+    public static boolean RUN_USING_ENCODER = true;
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(19, 0, 9,13.5);
 
     public static double WHEEL_RADIUS = 1.8898; // in
