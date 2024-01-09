@@ -1,10 +1,12 @@
 package org.inventors.ftc.robotbase.hardware;
 
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.arcrobotics.ftclib.util.MathUtils;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import androidx.annotation.NonNull;
 
 public class MotorExEx extends MotorEx {
+    private double MAX_SPEED = 1;
     /**
      * Constructs the instance motor for the wrapper
      *
@@ -38,7 +40,16 @@ public class MotorExEx extends MotorEx {
         super(hMap, id, cpr, rpm);
     }
 
+    @Override
+    public void set(double output) {
+        super.set(MathUtils.clamp(output, -MAX_SPEED, MAX_SPEED));
+    }
+
     public void setIntegralBounds(double minIntegral, double maxIntegral) {
         veloController.setIntegrationBounds(minIntegral, maxIntegral);
+    }
+
+    public void setMaxPower(int power) {
+        this.MAX_SPEED = power;
     }
 }
