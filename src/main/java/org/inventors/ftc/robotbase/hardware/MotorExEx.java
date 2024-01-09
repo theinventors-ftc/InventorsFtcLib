@@ -49,7 +49,7 @@ public class MotorExEx extends MotorEx {
         veloController.setIntegrationBounds(minIntegral, maxIntegral);
     }
 
-    public void setMaxPower(int power) {
+    public void setMaxPower(double power) {
         this.MAX_SPEED = power;
     }
 }
