@@ -42,7 +42,16 @@ public class MotorExEx extends MotorEx {
 
     @Override
     public void set(double output) {
-        super.set(MathUtils.clamp(output, -MAX_SPEED, MAX_SPEED));
+        if (runmode == RunMode.VelocityControl) {
+            double speed = bufferFraction * output * ACHIEVABLE_MAX_TICKS_PER_SECOND;
+            double velocity = veloController.calculate(getCorrectedVelocity(), speed) + feedforward.calculate(speed, getAcceleration());
+            motorEx.setPower(velocity / ACHIEVABLE_MAX_TICKS_PER_SECOND);
+        } else if (runmode == RunMode.PositionControl) {
+            double error = positionController.calculate(encoder.getPosition());
+            motorEx.setPower(MathUtils.clamp(output * error, -MAX_SPEED, MAX_SPEED));
+        } else {
+            motorEx.setPower(output);
+        }
     }
 
     public void setIntegralBounds(double minIntegral, double maxIntegral) {
