@@ -2,6 +2,7 @@ package org.inventors.ftc.robotbase.hardware;
 
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.util.MathUtils;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import androidx.annotation.NonNull;
 
@@ -60,5 +61,9 @@ public class MotorExEx extends MotorEx {
 
     public void setMaxPower(double power) {
         this.MAX_SPEED = power;
+    }
+
+    public DcMotor getRawMotor() {
+        return motor;
     }
 }
