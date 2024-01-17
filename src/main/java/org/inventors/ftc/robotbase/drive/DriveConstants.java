@@ -1,6 +1,5 @@
 package org.inventors.ftc.robotbase.drive;
 
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 public class DriveConstants {
@@ -14,8 +13,6 @@ public class DriveConstants {
     public static double MAX_ANG_VEL = 2.3416948318481445;
     public static double MAX_ANG_ACCEL = Math.toRadians(279.98601117318435);
 
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7.5, 0, 0.05);
     public static double TICKS_PER_REV = 537.6;
     public static double MAX_RPM = 312;
 
