@@ -14,6 +14,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.inventors.ftc.robotbase.controllers.HeadingControllerSubsystem;
+import org.inventors.ftc.robotbase.controllers.HeadingControllerTargetSubsystem;
 import org.inventors.ftc.robotbase.drive.DriveConstants;
 import org.inventors.ftc.robotbase.drive.MecanumDriveCommand;
 import org.inventors.ftc.robotbase.drive.MecanumDriveSubsystem;
@@ -40,6 +41,7 @@ public class RobotEx {
 
     protected HeadingControllerSubsystem gyroFollow;
     protected HeadingControllerSubsystem cameraFollow;
+    protected HeadingControllerTargetSubsystem gyroTargetSubsystem;
     protected final Boolean initCamera;
 
     protected IMUSubsystem gyro;
@@ -111,16 +113,21 @@ public class RobotEx {
         driverOp.getGamepadButton(GamepadKeys.Button.START)
                 .whenPressed(new InstantCommand(gyro::resetYawValue, gyro));
 
+        gyroTargetSubsystem = new HeadingControllerTargetSubsystem(() -> driverOp.getRightX(), () -> driverOp.getRightY());
+
         gyroFollow = new HeadingControllerSubsystem(gyro::getYaw,
                 gyro::findClosestOrientationTarget);
-        new Trigger(() -> driverOp.getRightY() >= 0.8).whenActive(
-                new InstantCommand(() -> gyroFollow.setGyroTarget(180), gyroFollow));
-        new Trigger(() -> driverOp.getRightY() <= -0.8).whenActive(
-                new InstantCommand(() -> gyroFollow.setGyroTarget(0), gyroFollow));
-        new Trigger(() -> driverOp.getRightX() >= 0.8).whenActive(
-                new InstantCommand(() -> gyroFollow.setGyroTarget(-90), gyroFollow));
-        new Trigger(() -> driverOp.getRightX() <= -0.8).whenActive(
-                new InstantCommand(() -> gyroFollow.setGyroTarget(90), gyroFollow));
+//        new Trigger(() -> driverOp.getRightY() >= 0.8).whenActive(
+//                new InstantCommand(() -> gyroFollow.setGyroTarget(180), gyroFollow));
+//        new Trigger(() -> driverOp.getRightY() <= -0.8).whenActive(
+//                new InstantCommand(() -> gyroFollow.setGyroTarget(0), gyroFollow));
+//        new Trigger(() -> driverOp.getRightX() >= 0.8).whenActive(
+//                new InstantCommand(() -> gyroFollow.setGyroTarget(-90), gyroFollow));
+//        new Trigger(() -> driverOp.getRightX() <= -0.8).whenActive(
+//                new InstantCommand(() -> gyroFollow.setGyroTarget(90), gyroFollow));
+
+        new Trigger(() -> gyroTargetSubsystem.getMagnitude() >= 0.6).whenActive(
+                new InstantCommand(() -> gyroFollow.setGyroTarget(gyroTargetSubsystem.getAngle()), gyroFollow));
 
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
                 .whenPressed(new InstantCommand(gyroFollow::toggleState, gyroFollow));

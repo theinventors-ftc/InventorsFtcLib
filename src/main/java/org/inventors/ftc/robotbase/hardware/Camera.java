@@ -13,8 +13,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public class Camera {
     private final OpenCvWebcam webcam;
-    //    protected RectangleTracking pipeline;
-    protected AprilTagDetectionPipeline april_tag_pipeline;
+//    protected AprilTagDetectionPipeline april_tag_pipeline;
 
     double fx = 578.272;
     double fy = 578.272;
@@ -31,15 +30,15 @@ public class Camera {
                 "webcam"), cameraMonitorViewId);
         dashboard.startCameraStream(webcam, 30);
 
-        april_tag_pipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-        webcam.setPipeline(april_tag_pipeline);
+//        april_tag_pipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+//        webcam.setPipeline(april_tag_pipeline);
 
         // Timeout for obtaining permission is configurable. Set before opening.
         webcam.setMillisecondsPermissionTimeout(2500);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPSIDE_DOWN);
+                webcam.startStreaming(1280, 720);
             }
 
             @Override
@@ -50,20 +49,4 @@ public class Camera {
             }
         });
     }
-
-//    public RectangleTracking getPipeline(){
-//        return pipeline;
-//    }
-
-    public AprilTagDetectionPipeline getPipeline(){
-        return april_tag_pipeline;
-    }
-
-//    public double getObject_x(){
-//        return pipeline.getElementsAnalogCoordinates()[0];
-//    }
-//
-//    public double getObject_y(){
-//        return pipeline.getElementsAnalogCoordinates()[1];
-//    }
 }
