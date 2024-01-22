@@ -54,16 +54,16 @@ public class IMUSubsystem extends SubsystemBase {
     public int findClosestOrientationTarget() {
         double dist, minDist = Math.abs(contYaw);
         int minDistIdx = 0;
-        int maxIdx = (int) Math.ceil(Math.abs(contYaw) / 90);
+        int maxIdx = (int) Math.ceil(Math.abs(contYaw) / 45);
         for (int i = -maxIdx; i <= maxIdx; ++i) {
-            dist = Math.abs(i * 90 - contYaw);
+            dist = Math.abs(i * 45 - contYaw);
             if (dist < minDist) {
                 minDistIdx = i;
                 minDist = dist;
             }
         }
 
-        return minDistIdx * 90;
+        return minDistIdx * 45;
     }
 
     private void calculateContinuousValue() {
