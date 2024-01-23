@@ -6,6 +6,8 @@ import androidx.annotation.RequiresApi;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.util.function.DoubleSupplier;
 
 public class HeadingControllerTargetSubsystem extends SubsystemBase {
@@ -18,10 +20,13 @@ public class HeadingControllerTargetSubsystem extends SubsystemBase {
     private double angleTarget = 0; // The closest in 0, 45, 90, 135 ... degrees
     private int[] angles = {0, 45, 90, 135, 180, -45, -90, -135, -180};
 
-    public HeadingControllerTargetSubsystem(DoubleSupplier stick_x, DoubleSupplier stick_y) {
-        this.headingControllerSubsystem = headingControllerSubsystem;
+    private Telemetry telemetry;
+
+    public HeadingControllerTargetSubsystem(DoubleSupplier stick_x, DoubleSupplier stick_y, Telemetry telemetry) {
         this.stick_x = stick_x;
         this.stick_y = stick_y;
+
+        this.telemetry = telemetry;
     }
 
     public static int findClosestAngle(int[] targets, int curAngle) {
@@ -44,6 +49,10 @@ public class HeadingControllerTargetSubsystem extends SubsystemBase {
     public void periodic() {
         vectorAngle = Math.atan2(stick_y.getAsDouble(), stick_x.getAsDouble());
         vectorMagnitude = Math.sqrt(Math.pow(stick_x.getAsDouble(), 2) + Math.pow(stick_y.getAsDouble(), 2));
+
+        telemetry.addData("Angle: ", vectorAngle);
+        telemetry.addData("Magnituqde: ", vectorMagnitude);
+        telemetry.addData("Snap Angle: ", getAngle());
     }
     public double getAngle() {
         return findClosestAngle(angles, (int)vectorAngle);

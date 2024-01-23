@@ -113,7 +113,7 @@ public class RobotEx {
         driverOp.getGamepadButton(GamepadKeys.Button.START)
                 .whenPressed(new InstantCommand(gyro::resetYawValue, gyro));
 
-        gyroTargetSubsystem = new HeadingControllerTargetSubsystem(() -> driverOp.getRightX(), () -> driverOp.getRightY());
+        gyroTargetSubsystem = new HeadingControllerTargetSubsystem(() -> driverOp.getRightX(), () -> driverOp.getRightY(), telemetry);
 
         gyroFollow = new HeadingControllerSubsystem(gyro::getYaw,
                 gyro::findClosestOrientationTarget);
