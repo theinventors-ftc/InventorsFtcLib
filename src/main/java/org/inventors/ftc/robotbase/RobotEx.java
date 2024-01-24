@@ -70,17 +70,17 @@ public class RobotEx {
     }
 
     public void initCommon(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, OpModeType type) {
+        ////////////////////////////////////////// Camera //////////////////////////////////////////
+        this.dashboard = FtcDashboard.getInstance();
+        if (this.initCamera) camera = new Camera(hardwareMap, dashboard, telemetry);
+
         //////////////////////////////////////// Telemetries ///////////////////////////////////////
         this.telemetry = telemetry;
-        this.dashTelemetry = FtcDashboard.getInstance().getTelemetry();
+        this.dashTelemetry = dashboard.getTelemetry();
 
         //////////////////////////////////////////// IMU ///////////////////////////////////////////
-        gyro = new IMUSubsystem(hardwareMap);
+        gyro = new IMUSubsystem(hardwareMap, telemetry);
         CommandScheduler.getInstance().registerSubsystem(gyro);
-
-        ////////////////////////////////////////// Camera //////////////////////////////////////////
-
-        if (this.initCamera) camera = new Camera(hardwareMap, dashboard);
 
         /////////////////////////////////////////// Drive //////////////////////////////////////////
         drive = new MecanumDriveSubsystem(hardwareMap, type, RobotConstants);
@@ -116,7 +116,7 @@ public class RobotEx {
         gyroTargetSubsystem = new HeadingControllerTargetSubsystem(() -> driverOp.getRightX(), () -> driverOp.getRightY(), telemetry);
 
         gyroFollow = new HeadingControllerSubsystem(gyro::getYaw,
-                gyro::findClosestOrientationTarget);
+                gyro::findClosestOrientationTarget, telemetry);
 //        new Trigger(() -> driverOp.getRightY() >= 0.8).whenActive(
 //                new InstantCommand(() -> gyroFollow.setGyroTarget(180), gyroFollow));
 //        new Trigger(() -> driverOp.getRightY() <= -0.8).whenActive(
@@ -126,10 +126,10 @@ public class RobotEx {
 //        new Trigger(() -> driverOp.getRightX() <= -0.8).whenActive(
 //                new InstantCommand(() -> gyroFollow.setGyroTarget(90), gyroFollow));
 
-        new Trigger(() -> gyroTargetSubsystem.getMagnitude() >= 0.6).whenActive(
+        new Trigger(() -> gyroTargetSubsystem.getMagnitude() >= 0.6).whileActiveContinuous(
                 new InstantCommand(() -> gyroFollow.setGyroTarget(gyroTargetSubsystem.getAngle()), gyroFollow));
 
-        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
+        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new InstantCommand(gyroFollow::toggleState, gyroFollow));
 
         ////////////////////////// Setup and Initialize Mechanisms Objects /////////////////////////
