@@ -47,12 +47,12 @@ public class HeadingControllerTargetSubsystem extends SubsystemBase {
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void periodic() {
-        vectorAngle = Math.atan2(stick_y.getAsDouble(), stick_x.getAsDouble());
-        vectorMagnitude = Math.sqrt(Math.pow(stick_x.getAsDouble(), 2) + Math.pow(stick_y.getAsDouble(), 2));
+        vectorAngle = Math.toDegrees(Math.atan2(-stick_x.getAsDouble(), -stick_y.getAsDouble()));
+        vectorMagnitude = Math.sqrt(Math.pow(-stick_x.getAsDouble(), 2) + Math.pow(-stick_y.getAsDouble(), 2));
 
         telemetry.addData("Angle: ", vectorAngle);
         telemetry.addData("Magnituqde: ", vectorMagnitude);
-        telemetry.addData("Snap Angle: ", getAngle());
+        telemetry.addData("Target Angle: ", getAngle());
     }
     public double getAngle() {
         return findClosestAngle(angles, (int)vectorAngle);

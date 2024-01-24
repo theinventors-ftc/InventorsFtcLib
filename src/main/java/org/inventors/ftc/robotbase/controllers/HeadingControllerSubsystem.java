@@ -7,6 +7,8 @@ import androidx.annotation.RequiresApi;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 
@@ -32,13 +34,23 @@ public class HeadingControllerSubsystem extends SubsystemBase {
 
     PIDController controller;
 
+    private Telemetry telemetry;
+
     public HeadingControllerSubsystem(DoubleSupplier gyroValue,
-                                      IntSupplier closestOrientationTarget) {
+                                      IntSupplier closestOrientationTarget,
+                                      Telemetry telemetry) {
         kP = 0.06;
         controller = new PIDController(kP, kI, kD);
         this.gyroValue = gyroValue;
         this.closestOrientationTarget = closestOrientationTarget;
         fType = Type.GYRO;
+
+        this.telemetry = telemetry;
+    }
+
+    @Override
+    public void periodic() {
+        telemetry.addData("Gyro: ", gyroValue.getAsDouble());
     }
 
     public HeadingControllerSubsystem(DoubleSupplier getCameraObject_x) {
@@ -80,7 +92,7 @@ public class HeadingControllerSubsystem extends SubsystemBase {
         minDistIdx = 0;
         minDist = Math.abs(targetOrient - gyroValueDouble);
         maxIdx = (int) Math.ceil(Math.abs(gyroValueDouble) / 360);
-        for (int i = -maxIdx; i <= maxIdx; i++) {
+        for (int i = maxIdx - 2; i <= maxIdx; i++) {
             dist = Math.abs(i * 360 + targetOrient - gyroValueDouble);
             if (dist < minDist) {
                 minDistIdx = i;

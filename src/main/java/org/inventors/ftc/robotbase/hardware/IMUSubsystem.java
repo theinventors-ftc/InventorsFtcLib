@@ -3,6 +3,8 @@ package org.inventors.ftc.robotbase.hardware;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.arcrobotics.ftclib.util.Timing.Timer;
 public class IMUSubsystem extends SubsystemBase {
     private final RevIMU imu;
 
@@ -12,13 +14,21 @@ public class IMUSubsystem extends SubsystemBase {
     private double[] accel;
     private double maxAccelX, maxAccelY, maxAccelZ;
     private double contYaw;
+    private Timer timer;
+    private double in_time;
 
     private double[] angles;
 //    private TelemetrySubsystem telemetrySubsystem;
 
-    public IMUSubsystem(HardwareMap hardwareMap) {
+    private Telemetry telemetry;
+
+    public IMUSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
         imu = new RevIMU(hardwareMap);
         imu.init();
+        timer = new Timer(0);
+        timer.start();
+
+        this.telemetry = telemetry;
 
 //        telemetrySubsystem.addMonitor("Gyro Yaw", () -> getRawYaw());
 //        telemetrySubsystem.addMonitor("Gyro Pitch", () -> getPitch());
@@ -27,12 +37,16 @@ public class IMUSubsystem extends SubsystemBase {
     }
 
     public void periodic() {
+        in_time = timer.elapsedTime();
+
         angles = imu.getYawPitchRoll();
         rawYaw = angles[0];
         rawPitch = angles[1];
         rawRoll = angles[2];
 
         calculateContinuousValue();
+        telemetry.addData("Period", timer.elapsedTime()-in_time);
+        telemetry.addData("Hz", 1/(timer.elapsedTime()-in_time));
     }
 
     public double getYaw() {
@@ -55,7 +69,7 @@ public class IMUSubsystem extends SubsystemBase {
         double dist, minDist = Math.abs(contYaw);
         int minDistIdx = 0;
         int maxIdx = (int) Math.ceil(Math.abs(contYaw) / 45);
-        for (int i = -maxIdx; i <= maxIdx; ++i) {
+        for (int i = maxIdx-2; i <= maxIdx-1; ++i) {
             dist = Math.abs(i * 45 - contYaw);
             if (dist < minDist) {
                 minDistIdx = i;
@@ -72,6 +86,9 @@ public class IMUSubsystem extends SubsystemBase {
 
         previousRawYaw = rawYaw;
         contYaw = rawYaw + 360 * turns;
+
+        telemetry.addData("Raw Yaw", rawYaw);
+        telemetry.addData("Cont Yaw", contYaw);
     }
 
     public void resetYawValue() {
