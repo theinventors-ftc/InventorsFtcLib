@@ -19,7 +19,7 @@ public class Camera {
 
     private Telemetry telemetry;
 
-    public Camera(HardwareMap hardwareMap, FtcDashboard dashboard, Telemetry telemetry) {
+    public Camera(HardwareMap hardwareMap, FtcDashboard dashboard, Telemetry telemetry, TeamPropDetectionPipeline.Alliance alliance) {
         this.telemetry = telemetry;
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources()
@@ -30,7 +30,7 @@ public class Camera {
         dashboard.startCameraStream(webcam, 0);
 
 //        april_tag_pipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-        teamPropDetectionPipeline = new TeamPropDetectionPipeline(telemetry, TeamPropDetectionPipeline.Alliance.BLUE, 60, 5);
+        teamPropDetectionPipeline = new TeamPropDetectionPipeline(telemetry, alliance, 60, 5);
         webcam.setPipeline(teamPropDetectionPipeline);
 
         // Timeout for obtaining permission is configurable. Set before opening.

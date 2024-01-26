@@ -13,6 +13,7 @@ import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.inventors.ftc.opencvpipelines.TeamPropDetectionPipeline;
 import org.inventors.ftc.robotbase.controllers.HeadingControllerSubsystem;
 import org.inventors.ftc.robotbase.controllers.HeadingControllerTargetSubsystem;
 import org.inventors.ftc.robotbase.drive.DriveConstants;
@@ -20,7 +21,9 @@ import org.inventors.ftc.robotbase.drive.MecanumDriveCommand;
 import org.inventors.ftc.robotbase.drive.MecanumDriveSubsystem;
 import org.inventors.ftc.robotbase.hardware.Camera;
 import org.inventors.ftc.robotbase.hardware.GamepadExEx;
+import org.inventors.ftc.robotbase.hardware.IMUEmmulatedSubsystem;
 import org.inventors.ftc.robotbase.hardware.IMUSubsystem;
+import org.inventors.ftc.robotbase.hardware.MotorExEx;
 
 public class RobotEx {
     // enum to specify opmode type
@@ -44,7 +47,7 @@ public class RobotEx {
     protected HeadingControllerTargetSubsystem gyroTargetSubsystem;
     protected final Boolean initCamera;
 
-    protected IMUSubsystem gyro;
+    protected IMUEmmulatedSubsystem gyro;
 
     protected Telemetry telemetry, dashTelemetry;
 
@@ -72,18 +75,18 @@ public class RobotEx {
     public void initCommon(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, OpModeType type) {
         ////////////////////////////////////////// Camera //////////////////////////////////////////
         this.dashboard = FtcDashboard.getInstance();
-        if (this.initCamera) camera = new Camera(hardwareMap, dashboard, telemetry);
+        if (this.initCamera) camera = new Camera(hardwareMap, dashboard, telemetry, TeamPropDetectionPipeline.Alliance.RED);
 
         //////////////////////////////////////// Telemetries ///////////////////////////////////////
         this.telemetry = telemetry;
         this.dashTelemetry = dashboard.getTelemetry();
 
-        //////////////////////////////////////////// IMU ///////////////////////////////////////////
-        gyro = new IMUSubsystem(hardwareMap, telemetry);
-        CommandScheduler.getInstance().registerSubsystem(gyro);
-
         /////////////////////////////////////////// Drive //////////////////////////////////////////
         drive = new MecanumDriveSubsystem(hardwareMap, type, RobotConstants);
+
+        //////////////////////////////////////////// IMU ///////////////////////////////////////////
+        gyro = new IMUEmmulatedSubsystem(hardwareMap, telemetry, getMotors()[0], getMotors()[3]);
+        CommandScheduler.getInstance().registerSubsystem(gyro);
     }
 
     public void initAuto(HardwareMap hardwareMap) {
@@ -126,7 +129,7 @@ public class RobotEx {
 //        new Trigger(() -> driverOp.getRightX() <= -0.8).whenActive(
 //                new InstantCommand(() -> gyroFollow.setGyroTarget(90), gyroFollow));
 
-        new Trigger(() -> gyroTargetSubsystem.getMagnitude() >= 0.6).whileActiveContinuous(
+        new Trigger(() -> gyroTargetSubsystem.getMagnitude() >= 0.7 && gyroFollow.isEnabled()).whileActiveContinuous(
                 new InstantCommand(() -> gyroFollow.setGyroTarget(gyroTargetSubsystem.getAngle()), gyroFollow));
 
         driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
@@ -155,6 +158,10 @@ public class RobotEx {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public double drivetrainTurn() {
         return gyroFollow.isEnabled() ? -gyroFollow.calculateTurn() : driverOp.getRightX();
+    }
+
+    public MotorExEx[] getMotors() {
+        return drive.getMotors();
     }
 
     public Telemetry getTelemetry() {

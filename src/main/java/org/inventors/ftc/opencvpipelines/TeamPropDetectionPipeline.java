@@ -16,9 +16,8 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
         BLUE
     }
 
-    public Alliance allianceType;
-    public double threshold;
-    public double blurAmount;
+    public Alliance allianceType = Alliance.RED;
+    public double threshold = 60;
 
     Mat blurred = new Mat();
     Mat redChannel = new Mat();
@@ -48,13 +47,15 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
 //    Rect centerRect = new Rect(640, 440, 1120-640, 800-440);
 //    Rect rightRect = new Rect(1280, 430, 1598-1280, 890-430);
 
-    Rect leftRect = new Rect(40*1280/1600, 440*720/1200, 400*1280/1600, 400*720/1200);
-    Rect centerRect = new Rect(720*1280/1600, 470*720/1200, 320*1280/1600, 320*720/1200);
-    Rect rightRect = new Rect(1199*1280/1600, 430*720/1200, 400*1280/1600, 400*720/1200);
+    Rect leftRect = new Rect(40, 270, 400, 360);
+    Rect centerRect = new Rect(520, 250, 320, 319);
+    Rect rightRect = new Rect(900, 310, 300, 400);
 
     double leftMean = 0.0, centerMean = 0.0, rightMean = 0.0;
 
     Telemetry telemetry;
+
+    double blurAmount = 0.0;
 
     public TeamPropDetectionPipeline(Telemetry telemetry, Alliance allianceType, double threshhold,
                                      double blurAmount, Rect leftRect, Rect centerRect, Rect rightRect) {
@@ -89,22 +90,16 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
         this.blurAmount = 6;
     }
 
-//    @Override
-//    public void init(Mat mat) {
-//        telemetry.addData("Width: ", mat.cols());
-//        telemetry.addData("Height: ", mat.rows());
-//    }
-
     @Override
     public Mat processFrame(Mat input) {
         // Blur a bit the image for smoother edges
-        Imgproc.blur(input, blurred, new Size(blurAmount, blurAmount));
+        Imgproc.blur(input, blurred, new Size(5, 5));
 
         // Split the channels so they are compared later
         Core.extractChannel(blurred, redChannel, 0);
         Core.extractChannel(blurred, greenChannel, 1);
         Core.extractChannel(blurred, blueChannel, 2);
-
+//
         if (allianceType == Alliance.RED) {
             Core.subtract(redChannel, greenChannel, redGreenDif);
             Core.subtract(redChannel, blueChannel, redBlueDif);
@@ -141,10 +136,14 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
 //        telemetry.addData("Left Mean: ", leftMean);
 //        telemetry.addData("Center Mean: ", centerMean);
 //        telemetry.addData("Right Mean: ", rightMean);
-        telemetry.addData("Position: ", getPropPosition());
+//        telemetry.addData("Position: ", getPropPosition());
+//        telemetry.update();
+//
+//        telemetry.addData("Width", input.cols());
+//        telemetry.addData("Height", input.rows());
 //        telemetry.update();
 
-        return input;
+        return thresh;
     }
 
     public void setThreshold(int newThreshold) {
@@ -168,4 +167,3 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
         return indexOfLargest;
     }
 }
-
