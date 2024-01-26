@@ -72,7 +72,7 @@ public class HeadingControllerSubsystem extends SubsystemBase {
                 target = closestOrientationTarget.getAsInt();
                 findClosestTarget = false;
             }
-            curValue = gyroValue.getAsDouble();
+            curValue = gyroValue.getAsDouble(); // Minus for encoders
         }
 
         return controller.calculate(curValue);
@@ -86,23 +86,36 @@ public class HeadingControllerSubsystem extends SubsystemBase {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void setGyroTarget(double targetOrient) {
         double gyroValueDouble = gyroValue.getAsDouble();
-        double dist, minDist;
         int minDistIdx, maxIdx;
 
-        minDistIdx = 0;
-        minDist = Math.abs(targetOrient - gyroValueDouble);
-        maxIdx = (int) Math.ceil(Math.abs(gyroValueDouble) / 360);
-        for (int i = maxIdx - 2; i <= maxIdx; i++) {
-            dist = Math.abs(i * 360 + targetOrient - gyroValueDouble);
-            if (dist < minDist) {
-                minDistIdx = i;
-                minDist = dist;
-            }
-        }
+        maxIdx = (int) Math.ceil(gyroValueDouble / 360);
+        if (Math.abs((maxIdx - 1) * 360 + targetOrient - gyroValueDouble) > Math.abs((maxIdx) * 360 + targetOrient - gyroValueDouble))
+            minDistIdx = maxIdx;
+        else
+            minDistIdx = maxIdx - 1;
 
         target = minDistIdx * 360 + targetOrient;
         controller.setSetPoint(target);
     }
+//    public void setGyroTarget(double targetOrient) {
+//        double gyroValueDouble = gyroValue.getAsDouble();
+//        double dist, minDist;
+//        int minDistIdx, maxIdx;
+//
+//        minDistIdx = 0;
+//        minDist = Math.abs(targetOrient - gyroValueDouble);
+//        maxIdx = (int) Math.ceil(Math.abs(gyroValueDouble) / 360);
+//        for (int i = maxIdx - 2; i <= maxIdx; i++) {
+//            dist = Math.abs(i * 360 + targetOrient - gyroValueDouble);
+//            if (dist < minDist) {
+//                minDistIdx = i;
+//                minDist = dist;
+//            }
+//        }
+//
+//        target = minDistIdx * 360 + targetOrient;
+//        controller.setSetPoint(target);
+//    }
 
     public double getTarget() {
         return target;

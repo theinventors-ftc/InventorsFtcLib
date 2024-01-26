@@ -77,6 +77,11 @@ public class MecanumDriveSubsystem extends SubsystemBase {
             );
         }
 
+        frontLeft.resetEncoder();
+        frontRight.resetEncoder();
+        rearLeft.resetEncoder();
+        rearRight.resetEncoder();
+
         if (type == TELEOP) {
             /* ------------------------------------- TELEOP ------------------------------------- */
             CommandScheduler.getInstance().registerSubsystem(this);
@@ -141,5 +146,9 @@ public class MecanumDriveSubsystem extends SubsystemBase {
             motor.setIntegralBounds(RobotConstants.minIntegralBound, RobotConstants.maxIntegralBound);
             motor.setVeloCoefficients(kP, kI, kD);
         }
+    }
+
+    public MotorExEx[] getMotors() {
+        return new MotorExEx[]{frontLeft, frontRight, rearLeft, rearRight};
     }
 }
