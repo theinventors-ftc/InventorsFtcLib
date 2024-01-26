@@ -1,10 +1,11 @@
 package org.inventors.ftc.robotbase.hardware;
 
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import androidx.annotation.NonNull;
+import com.arcrobotics.ftclib.util.MathUtils;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class MotorExEx extends MotorEx {
+    private double MAX_SPEED = 1;
     /**
      * Constructs the instance motor for the wrapper
      *
@@ -38,6 +39,32 @@ public class MotorExEx extends MotorEx {
         super(hMap, id, cpr, rpm);
     }
 
+    @Override
+    public void set(double output) {
+        if (runmode == RunMode.VelocityControl) {
+            double speed = bufferFraction * output * ACHIEVABLE_MAX_TICKS_PER_SECOND;
+            double velocity = veloController.calculate(getCorrectedVelocity(), speed) + feedforward.calculate(speed, getAcceleration());
+            motorEx.setPower(velocity / ACHIEVABLE_MAX_TICKS_PER_SECOND);
+        } else if (runmode == RunMode.PositionControl) {
+            double error = positionController.calculate(encoder.getPosition());
+            motorEx.setPower(MathUtils.clamp(output * error, -MAX_SPEED, MAX_SPEED));
+        } else {
+            motorEx.setPower(output);
+        }
+    }
+
+    public void setIntegralBounds(double minIntegral, double maxIntegral) {
+        veloController.setIntegrationBounds(minIntegral, maxIntegral);
+    }
+
+    public void setMaxPower(double power) {
+        this.MAX_SPEED = power;
+    }
+
+    public DcMotor getRawMotor() {
+        return motor;
+    }
+  
     public void setIntegralBounds(double minIntegral, double maxIntegral) {
         veloController.setIntegrationBounds(minIntegral, maxIntegral);
     }
