@@ -3,8 +3,6 @@ package org.inventors.ftc.robotbase.hardware;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.util.MathUtils;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import androidx.annotation.NonNull;
 
 public class MotorExEx extends MotorEx {
     private double MAX_SPEED = 1;
@@ -65,5 +63,9 @@ public class MotorExEx extends MotorEx {
 
     public DcMotor getRawMotor() {
         return motor;
+    }
+  
+    public void setIntegralBounds(double minIntegral, double maxIntegral) {
+        veloController.setIntegrationBounds(minIntegral, maxIntegral);
     }
 }

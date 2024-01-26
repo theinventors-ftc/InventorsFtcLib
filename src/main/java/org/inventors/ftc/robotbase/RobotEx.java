@@ -13,6 +13,7 @@ import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import org.inventors.ftc.opencvpipelines.TeamPropDetectionPipeline;
 import org.inventors.ftc.robotbase.controllers.HeadingControllerSubsystem;
 import org.inventors.ftc.robotbase.controllers.HeadingControllerTargetSubsystem;
@@ -40,6 +41,8 @@ public class RobotEx {
     protected MecanumDriveSubsystem drive = null;
     protected MecanumDriveCommand driveCommand = null;
 
+    protected Pose2d staticPoseStorage;
+
     public Camera camera;
 
     protected HeadingControllerSubsystem gyroFollow;
@@ -62,12 +65,12 @@ public class RobotEx {
                    GamepadExEx toolOp, OpModeType type, Boolean initCamera
     ) {
         this.initCamera = initCamera;
-        initCommon(hardwareMap, RobotConstants, telemetry, type);
+        initCommon(hardwareMap, RobotConstants, telemetry, type, staticPoseStorage);
         if (type == OpModeType.TELEOP) {
             initTele(hardwareMap, driverOp, toolOp);
             opModeType = OpModeType.TELEOP;
         } else {
-            initAuto(hardwareMap);
+            initAuto(hardwareMap, autoStopRequested);
             opModeType = OpModeType.AUTO;
         }
     }
@@ -89,9 +92,11 @@ public class RobotEx {
         CommandScheduler.getInstance().registerSubsystem(gyro);
     }
 
-    public void initAuto(HardwareMap hardwareMap) {
+    public void initAuto(HardwareMap hardwareMap, BooleanSupplier isStopRequested) {
         //////////////////////////////////////// Drivetrain ////////////////////////////////////////
 //        SampleMecanumDrive rrDrive = new SampleMecanumDrive(hardwareMap);
+
+        new Trigger(isStopRequested).whenActive(new InstantCommand());
 
         ////////////////////////// Setup and Initialize Mechanisms Objects /////////////////////////
         initMechanismsAutonomous(hardwareMap);
@@ -104,6 +109,10 @@ public class RobotEx {
         this.driverOp = driverOp;
         this.toolOp = toolOp;
 
+        //////////////////////////////////////////// IMU ///////////////////////////////////////////
+        gyro = new IMUSubsystem(hardwareMap, staticPoseStorage.getHeading());
+        CommandScheduler.getInstance().registerSubsystem(gyro);
+
         //////////////////////////////////////// Drivetrain ////////////////////////////////////////
         driveCommand = new MecanumDriveCommand(drive, this::drivetrainForward,
                 this::drivetrainStrafe, this::drivetrainTurn, gyro::getRawYaw,
@@ -111,6 +120,7 @@ public class RobotEx {
 
         CommandScheduler.getInstance().registerSubsystem(drive);
         drive.setDefaultCommand(driveCommand);
+
 
         /////////////////////////////////////// Gyro Follower //////////////////////////////////////
         driverOp.getGamepadButton(GamepadKeys.Button.START)
@@ -170,5 +180,6 @@ public class RobotEx {
 
     public Telemetry getDashboardTelemetry() {
         return dashTelemetry;
+
     }
 }
