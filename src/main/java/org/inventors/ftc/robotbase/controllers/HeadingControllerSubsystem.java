@@ -30,7 +30,7 @@ public class HeadingControllerSubsystem extends SubsystemBase {
 
     private final double kP;
     private final double kI = 0;
-    private final double kD = 0;
+    private final double kD = 0.003;
 
     PIDController controller;
 
@@ -39,7 +39,8 @@ public class HeadingControllerSubsystem extends SubsystemBase {
     public HeadingControllerSubsystem(DoubleSupplier gyroValue,
                                       IntSupplier closestOrientationTarget,
                                       Telemetry telemetry) {
-        kP = 0.06;
+//        kP = 0.06;
+        kP = 0.03;
         controller = new PIDController(kP, kI, kD);
         this.gyroValue = gyroValue;
         this.closestOrientationTarget = closestOrientationTarget;
@@ -72,7 +73,7 @@ public class HeadingControllerSubsystem extends SubsystemBase {
                 target = closestOrientationTarget.getAsInt();
                 findClosestTarget = false;
             }
-            curValue = gyroValue.getAsDouble(); // Minus for encoders
+            curValue = gyroValue.getAsDouble();
         }
 
         return controller.calculate(curValue);
@@ -123,6 +124,16 @@ public class HeadingControllerSubsystem extends SubsystemBase {
 
     public void toggleState() {
         enabled = !enabled;
+        findClosestTarget = enabled || findClosestTarget;
+    }
+
+    public void enable() {
+        enabled = true;
+        findClosestTarget = enabled || findClosestTarget;
+    }
+
+    public void disable() {
+        enabled = false;
         findClosestTarget = enabled || findClosestTarget;
     }
 }
