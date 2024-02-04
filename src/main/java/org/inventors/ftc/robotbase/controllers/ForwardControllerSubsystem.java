@@ -40,7 +40,6 @@ public class ForwardControllerSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         telemetry.addData("Distance: ", distValue.getAsDouble());
-        telemetry.update();
     }
     @RequiresApi(api = Build.VERSION_CODES.N)
     public double calculateOutput() {
