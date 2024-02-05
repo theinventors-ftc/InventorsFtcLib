@@ -3,8 +3,8 @@ package org.inventors.ftc.robotbase.drive;
 import static org.inventors.ftc.robotbase.RobotEx.OpModeType.TELEOP;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -25,8 +25,13 @@ import java.util.List;
 public class MecanumDriveSubsystem extends SubsystemBase {
     static DriveConstants RobotConstants;
 
-    public MecanumDriveSubsystem(HardwareMap hardwareMap, RobotEx.OpModeType type, DriveConstants robotConstants) {
+    static StandardTrackingWheelLocalizer localizer;
+
+    public MecanumDriveSubsystem(HardwareMap hardwareMap, RobotEx.OpModeType type, DriveConstants robotConstants, Pose2d startingPose) {
         this.RobotConstants = robotConstants;
+
+        localizer = new StandardTrackingWheelLocalizer(hardwareMap, new ArrayList<Integer>(), new ArrayList<Integer>());
+        localizer.setPoseEstimate(startingPose);
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
@@ -91,6 +96,12 @@ public class MecanumDriveSubsystem extends SubsystemBase {
             );
         }
     }
+
+    @Override
+    public void periodic() {
+        localizer.update();
+    }
+
     /* ----------------------------------------- TELEOP ----------------------------------------- */
     private MotorExEx frontLeft, frontRight, rearRight, rearLeft;
     private IMU imu;
