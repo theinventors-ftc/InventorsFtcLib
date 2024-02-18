@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.inventors.ftc.robotbase.hardware.MotorExEx;
 import org.inventors.ftc.robotbase.RobotEx;
 
@@ -27,8 +28,11 @@ public class MecanumDriveSubsystem extends SubsystemBase {
 
     static StandardTrackingWheelLocalizer localizer;
 
-    public MecanumDriveSubsystem(HardwareMap hardwareMap, RobotEx.OpModeType type, DriveConstants robotConstants, Pose2d startingPose) {
+    static Telemetry telemetry;
+
+    public MecanumDriveSubsystem(HardwareMap hardwareMap, Telemetry telemetry, RobotEx.OpModeType type, DriveConstants robotConstants, Pose2d startingPose) {
         this.RobotConstants = robotConstants;
+        this.telemetry = telemetry;
 
         localizer = new StandardTrackingWheelLocalizer(hardwareMap, new ArrayList<Integer>(), new ArrayList<Integer>());
         localizer.setPoseEstimate(startingPose);
@@ -50,7 +54,10 @@ public class MecanumDriveSubsystem extends SubsystemBase {
 
         motors = Arrays.asList(frontLeft, frontRight, rearLeft, rearRight);
 
-        if (RobotConstants.RUN_USING_ENCODER) setMode(MotorExEx.RunMode.VelocityControl);
+        if (RobotConstants.RUN_USING_ENCODER) {
+            setMode(MotorExEx.RunMode.VelocityControl);
+            resetEncoders();
+        }
 
 
         setZeroPowerBehavior(MotorExEx.ZeroPowerBehavior.BRAKE);
@@ -100,6 +107,9 @@ public class MecanumDriveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         localizer.update();
+        telemetry.addData("X: ", localizer.getPoseEstimate().getX());
+        telemetry.addData("Y: ", localizer.getPoseEstimate().getY());
+//        telemetry.addData("Heading (Pose): ", Math.toDegrees(localizer.getPoseEstimate().getHeading()));
     }
 
     /* ----------------------------------------- TELEOP ----------------------------------------- */
@@ -131,6 +141,7 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         drive.setMaxSpeed(RobotConstants.DEFAULT_SPEED_PERC + fast_input * RobotConstants.FAST_SPEED_PERC - slow_input * RobotConstants.SLOW_SPEED_PERC);
         drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, heading);
     }
+
     public void setMotorsInverted(
             boolean leftFrontInverted, boolean rightFrontInverted,
             boolean rightRearInverted, boolean leftRearInverted
@@ -145,6 +156,9 @@ public class MecanumDriveSubsystem extends SubsystemBase {
     {
         for (MotorExEx motor : motors)
             motor.setRunMode(mode);
+    }
+    public void resetEncoders() {
+        for (MotorExEx motor : motors) motor.resetEncoder();
     }
     public void setZeroPowerBehavior(MotorExEx.ZeroPowerBehavior zeroPowerBehavior)
     {

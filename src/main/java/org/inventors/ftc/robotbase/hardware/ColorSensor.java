@@ -15,6 +15,8 @@ public class ColorSensor extends SubsystemBase {
 
     public ColorSensor(HardwareMap hm, String id) {
         this.sensor = hm.get(NormalizedColorSensor.class, id);
+
+        sensor.setGain(10);
     }
 
     public void setLight(Boolean state) {
@@ -53,23 +55,23 @@ public class ColorSensor extends SubsystemBase {
         return value;
     }
 
-    //    Returns a double [0, 1) describing the concentration of Red Color
+    //    Returns a double [0, 100) describing the concentration of Red Color
     public double getRed() {
-        return sensor.getNormalizedColors().red;
+        return Math.floor(sensor.getNormalizedColors().red*100);
     }
-    //    Returns a double [0, 1) describing the concentration of Green Color
+    //    Returns a double [0, 100) describing the concentration of Green Color
 
     public double getGreen() {
-        return sensor.getNormalizedColors().green;
+        return Math.floor(sensor.getNormalizedColors().green*100);
     }
 
-    //    Returns a double [0, 1) describing the concentration of Blue Color
+    //    Returns a double [0, 100) describing the concentration of Blue Color
     public double getBlue() {
-        return sensor.getNormalizedColors().blue;
+        return Math.floor(sensor.getNormalizedColors().blue*100);
     }
 
-    //    Returns a double [0, 1) describing the concentration of Alpha Value
+    //    Returns a double [0, 100) describing the concentration of Alpha Value
     public double getAlpha() {
-        return sensor.getNormalizedColors().alpha;
+        return Math.floor(sensor.getNormalizedColors().alpha*100);
     }
 }

@@ -19,9 +19,9 @@ public class ForwardControllerSubsystem extends SubsystemBase {
 
     private boolean enabled = false;
 
-    private final double kP = 0.015;
+    private final double kP = 0.012;
     private final double kI = 0;
-    private final double kD = 0.002;
+    private final double kD = 0 ;
 
     PIDController controller;
 

@@ -95,9 +95,10 @@ public class RobotEx {
         this.dashTelemetry = dashboard.getTelemetry();
 
         /////////////////////////////////////////// Drive //////////////////////////////////////////
-        drive = new MecanumDriveSubsystem(hardwareMap, type, RobotConstants, startingPose);
+        drive = new MecanumDriveSubsystem(hardwareMap, telemetry, type, RobotConstants, startingPose);
 
         //////////////////////////////////////////// IMU ///////////////////////////////////////////
+//        gyro = new IMUEmmulatedSubsystem(hardwareMap, telemetry, getMotors()[0], getMotors()[3], Math.toDegrees(startingPose.getHeading()));
         gyro = new IMUEmmulatedSubsystem(hardwareMap, telemetry, getMotors()[0], getMotors()[3]);
         CommandScheduler.getInstance().registerSubsystem(gyro);
     }
@@ -186,16 +187,23 @@ public class RobotEx {
     }
 
     public double drivetrainStrafe() {
-        double factor = distanceFollow.isEnabled() ? 0.3 : 1; // This lowers the max power in backdrop alignment for accuracy
+        double factor;
+        if (initDistance) {
+            factor = distanceFollow.isEnabled() ? 0.3 : 1; // This lowers the max power in backdrop alignment for accuracy
+        } else {
+            factor = 1;
+        }
         return driverOp.getLeftX() * factor;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public double drivetrainForward() {
-        double forwardPower;
+        double forwardPower = 0;
 
-        if (distanceFollow.isEnabled()) {
-            forwardPower = distanceFollow.calculateOutput();
+        if (initDistance) {
+            if (distanceFollow.isEnabled()) {
+                forwardPower = distanceFollow.calculateOutput();
+            }
         } else {
             forwardPower = driverOp.getLeftY();
         }
