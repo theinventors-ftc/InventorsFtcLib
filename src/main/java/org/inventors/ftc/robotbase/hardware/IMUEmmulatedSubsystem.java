@@ -13,7 +13,7 @@ public class IMUEmmulatedSubsystem extends SubsystemBase {
 
     private Telemetry telemetry;
 
-    private double yaw = 0, yawInit;
+    private double yaw = 0, yawInit = 0;
 
     private DcMotor leftEncoder, rightEncoder;
 
@@ -23,35 +23,25 @@ public class IMUEmmulatedSubsystem extends SubsystemBase {
     private final double proportion = 0.003237;
 
     public IMUEmmulatedSubsystem(HardwareMap hardwareMap, Telemetry telemetry, MotorExEx leftEncoderMotor,
-                                 MotorExEx rightEncoderMotor) {
+                                 MotorExEx rightEncoderMotor, double startingHeading) {
         this.telemetry = telemetry;
+
+//        leftEncoder = hardwareMap.get(DcMotor.class, "rearRight");
+//        rightEncoder = hardwareMap.get(DcMotor.class, "frontLeft");
         leftEncoder = leftEncoderMotor.getRawMotor();
         rightEncoder = rightEncoderMotor.getRawMotor();
-
-        this.yawInit = 0;
 
         leftPos = leftEncoder.getCurrentPosition()*-1;
         rightPos = rightEncoder.getCurrentPosition();
         diff = rightPos-leftPos;
-        yaw = diff*proportion;
+        yawInit = diff*proportion;
 
-        resetYawValue();
-    }
+        resetYawValue(startingHeading);
 
-    public IMUEmmulatedSubsystem(HardwareMap hardwareMap, Telemetry telemetry, MotorExEx leftEncoderMotor,
-                                 MotorExEx rightEncoderMotor, double initYaw) {
-        this.telemetry = telemetry;
-        leftEncoder = leftEncoderMotor.getRawMotor();
-        rightEncoder = rightEncoderMotor.getRawMotor();
-
-        this.yawInit = initYaw;
-
-        leftPos = leftEncoder.getCurrentPosition()*-1;
-        rightPos = rightEncoder.getCurrentPosition();
-        diff = rightPos-leftPos;
-        yaw = diff*proportion;
-
-        resetYawValue();
+//        leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//        rightEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void periodic() {
@@ -79,6 +69,21 @@ public class IMUEmmulatedSubsystem extends SubsystemBase {
         return 0;
     }
 
+//    public int findClosestOrientationTarget() {
+//        double dist, minDist = Math.abs(yaw);
+//        int minDistIdx = 0;
+//        int maxIdx = (int) Math.ceil(Math.abs(yaw) / 45);
+//        for (int i = maxIdx-2; i <= maxIdx-1; ++i) {
+//            dist = Math.abs(i * 45 - yaw);
+//            if (dist < minDist) {
+//                minDistIdx = i;
+//                minDist = dist;
+//            }
+//        }
+//
+//        return minDistIdx * 45;
+//    }
+
     public int findClosestOrientationTarget() {
         int minDistIdx;
         int maxIdx = (int) Math.ceil(yaw / 45);
@@ -96,5 +101,8 @@ public class IMUEmmulatedSubsystem extends SubsystemBase {
 
     public void resetYawValue() {
         yawInit = yaw;
+    }
+    public void resetYawValue(double startingHeading) {
+        yawInit = yaw + startingHeading;
     }
 }

@@ -39,14 +39,6 @@ public class MecanumDriveSubsystem extends SubsystemBase {
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        // TODO: adjust the names of the following hardware devices to match your configuration
-        imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT
-        ));
-        imu.initialize(parameters);
-
         frontLeft = new MotorExEx(hardwareMap, "frontLeft", Motor.GoBILDA.RPM_312);
         frontRight = new MotorExEx(hardwareMap, "frontRight", Motor.GoBILDA.RPM_312);
         rearRight = new MotorExEx(hardwareMap, "rearRight", Motor.GoBILDA.RPM_312);
