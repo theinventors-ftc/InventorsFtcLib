@@ -110,6 +110,8 @@ public class MecanumDriveSubsystem extends SubsystemBase {
     protected String m_name = this.getClass().getSimpleName();
     private com.arcrobotics.ftclib.drivebase.MecanumDrive drive;
 
+    private boolean fieldCentricEnabled = true;
+
     public String getName()
     {
         return m_name;
@@ -129,7 +131,11 @@ public class MecanumDriveSubsystem extends SubsystemBase {
     void drive(double strafeSpeed, double forwardSpeed, double turnSpeed, double heading, double fast_input, double slow_input)
     {
         drive.setMaxSpeed(RobotConstants.DEFAULT_SPEED_PERC + fast_input * RobotConstants.FAST_SPEED_PERC - slow_input * RobotConstants.SLOW_SPEED_PERC);
-        drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, heading);
+        if (fieldCentricEnabled) {
+            drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, heading);
+        } else {
+            drive.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed);
+        }
     }
     public void setMotorsInverted(
             boolean leftFrontInverted, boolean rightFrontInverted,
@@ -161,5 +167,9 @@ public class MecanumDriveSubsystem extends SubsystemBase {
 
     public MotorExEx[] getMotors() {
         return new MotorExEx[]{frontLeft, frontRight, rearLeft, rearRight};
+    }
+
+    public void toggleMode() {
+        fieldCentricEnabled = !fieldCentricEnabled;
     }
 }

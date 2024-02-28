@@ -147,7 +147,8 @@ public class RobotEx {
                 new InstantCommand(() -> gyroFollow.setGyroTarget(gyroTargetSubsystem.getAngle()), gyroFollow));
 
         driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new InstantCommand(gyroFollow::toggleState, gyroFollow));
+                .whenPressed(new InstantCommand(drive::toggleMode, drive));
+//                .whenPressed(new InstantCommand(gyroFollow::toggleState, gyroFollow));
 
         if (this.initDistance) {
             distanceSensor = new DistanceSensorEx(hardwareMap, "distance_sensor");
