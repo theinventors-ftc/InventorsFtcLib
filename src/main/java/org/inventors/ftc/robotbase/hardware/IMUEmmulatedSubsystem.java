@@ -22,7 +22,8 @@ public class IMUEmmulatedSubsystem extends SubsystemBase {
 
     private final double proportion = 0.003237;
 
-    public IMUEmmulatedSubsystem(HardwareMap hardwareMap, Telemetry telemetry, MotorExEx leftEncoderMotor, MotorExEx rightEncoderMotor) {
+    public IMUEmmulatedSubsystem(HardwareMap hardwareMap, Telemetry telemetry, MotorExEx leftEncoderMotor,
+                                 MotorExEx rightEncoderMotor, double startingHeading) {
         this.telemetry = telemetry;
 
 //        leftEncoder = hardwareMap.get(DcMotor.class, "rearRight");
@@ -35,7 +36,7 @@ public class IMUEmmulatedSubsystem extends SubsystemBase {
         diff = rightPos-leftPos;
         yawInit = diff*proportion;
 
-        resetYawValue();
+        resetYawValue(startingHeading);
 
 //        leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -100,5 +101,8 @@ public class IMUEmmulatedSubsystem extends SubsystemBase {
 
     public void resetYawValue() {
         yawInit = yaw;
+    }
+    public void resetYawValue(double startingHeading) {
+        yawInit = yaw + startingHeading;
     }
 }

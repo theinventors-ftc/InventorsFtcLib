@@ -30,9 +30,11 @@ public class HeadingControllerSubsystem extends SubsystemBase {
 
     private final double kP;
     private final double kI = 0;
-    private final double kD = 0.003;
+    private final double kD = 0.005;
 
-    PIDController controller;
+    private IIRSubsystem gyro_filter;
+
+    PIDFControllerEx controller;
 
     private Telemetry telemetry;
 
@@ -40,9 +42,10 @@ public class HeadingControllerSubsystem extends SubsystemBase {
                                       IntSupplier closestOrientationTarget,
                                       Telemetry telemetry) {
 //        kP = 0.06;
-        kP = 0.03;
-        controller = new PIDController(kP, kI, kD);
-        this.gyroValue = gyroValue;
+        kP = 0.035;
+        controller = new PIDFControllerEx(kP, kI, kD, 0, 0.5, 0, 0);
+        this.gyro_filter = new IIRSubsystem(0.2, gyroValue);
+        this.gyroValue = () -> gyro_filter.get();
         this.closestOrientationTarget = closestOrientationTarget;
         fType = Type.GYRO;
 
@@ -55,8 +58,8 @@ public class HeadingControllerSubsystem extends SubsystemBase {
     }
 
     public HeadingControllerSubsystem(DoubleSupplier getCameraObject_x) {
-        kP = 0.6;
-        controller = new PIDController(kP, kI, kD);
+        kP = 0.55;
+        controller = new PIDFControllerEx(kP, kI, kD, 0, 0.75, 0, 0);
         this.getCameraObject_x = getCameraObject_x;
         fType = Type.CAMERA;
     }

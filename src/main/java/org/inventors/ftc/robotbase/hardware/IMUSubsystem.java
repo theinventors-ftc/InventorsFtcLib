@@ -18,7 +18,6 @@ public class IMUSubsystem extends SubsystemBase {
     private double in_time;
 
     private double[] angles;
-//    private TelemetrySubsystem telemetrySubsystem;
 
     private Telemetry telemetry;
 
@@ -29,11 +28,6 @@ public class IMUSubsystem extends SubsystemBase {
         timer.start();
 
         this.telemetry = telemetry;
-
-//        telemetrySubsystem.addMonitor("Gyro Yaw", () -> getRawYaw());
-//        telemetrySubsystem.addMonitor("Gyro Pitch", () -> getPitch());
-//        telemetrySubsystem.addMonitor("Gyro Roll", () -> getRoll());
-//        telemetrySubsystem.addMonitor("Continuous Gyro Value", () -> contYaw);
     }
 
     public void periodic() {
@@ -45,8 +39,6 @@ public class IMUSubsystem extends SubsystemBase {
         rawRoll = angles[2];
 
         calculateContinuousValue();
-//        telemetry.addData("Period", timer.elapsedTime()-in_time);
-//        telemetry.addData("Hz", 1/(timer.elapsedTime()-in_time));
     }
 
     public double getYaw() {
@@ -65,21 +57,6 @@ public class IMUSubsystem extends SubsystemBase {
         return rawRoll;
     }
 
-//    public int findClosestOrientationTarget() {
-//        double dist, minDist = Math.abs(contYaw);
-//        int minDistIdx = 0;
-//        int maxIdx = (int) Math.ceil(Math.abs(contYaw) / 45);
-//        for (int i = maxIdx-2; i <= maxIdx-1; ++i) {
-//            dist = Math.abs(i * 45 - contYaw);
-//            if (dist < minDist) {
-//                minDistIdx = i;
-//                minDist = dist;
-//            }
-//        }
-//
-//        return minDistIdx * 45;
-//    }
-
     public int findClosestOrientationTarget() {
         int minDistIdx;
         int maxIdx = (int) Math.ceil(contYaw / 45);
@@ -97,9 +74,6 @@ public class IMUSubsystem extends SubsystemBase {
 
         previousRawYaw = rawYaw;
         contYaw = rawYaw + 360 * turns;
-
-//        telemetry.addData("Raw Yaw", rawYaw);
-//        telemetry.addData("Cont Yaw", contYaw);
     }
 
     public void resetYawValue() {

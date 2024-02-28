@@ -98,7 +98,8 @@ public class RobotEx {
         drive = new MecanumDriveSubsystem(hardwareMap, type, RobotConstants, startingPose);
 
         //////////////////////////////////////////// IMU ///////////////////////////////////////////
-        gyro = new IMUEmmulatedSubsystem(hardwareMap, telemetry, getMotors()[0], getMotors()[3]);
+        gyro = new IMUEmmulatedSubsystem(hardwareMap, telemetry, getMotors()[0], getMotors()[3],
+                startingPose.getHeading());
         CommandScheduler.getInstance().registerSubsystem(gyro);
     }
 
