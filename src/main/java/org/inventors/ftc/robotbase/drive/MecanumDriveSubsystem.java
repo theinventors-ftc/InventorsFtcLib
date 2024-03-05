@@ -133,6 +133,7 @@ public class MecanumDriveSubsystem extends SubsystemBase {
     void drive(double strafeSpeed, double forwardSpeed, double turnSpeed, double heading, double fast_input, double slow_input)
     {
         drive.setMaxSpeed(RobotConstants.DEFAULT_SPEED_PERC + fast_input * RobotConstants.FAST_SPEED_PERC - slow_input * RobotConstants.SLOW_SPEED_PERC);
+
         if (fieldCentricEnabled) {
             drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, heading);
         } else {
@@ -177,5 +178,12 @@ public class MecanumDriveSubsystem extends SubsystemBase {
 
     public void toggleMode() {
         fieldCentricEnabled = !fieldCentricEnabled;
+    }
+
+    public void setFieldCentric() {
+        fieldCentricEnabled = true;
+    }
+    public void setRobotCentric() {
+        fieldCentricEnabled = false;
     }
 }

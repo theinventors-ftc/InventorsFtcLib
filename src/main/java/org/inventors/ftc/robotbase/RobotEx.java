@@ -37,6 +37,11 @@ public class RobotEx {
         TELEOP, AUTO
     }
 
+    public enum Alliance {
+        RED,
+        BLUE
+    }
+
     protected OpModeType opModeType;
     protected FtcDashboard dashboard;
 
@@ -95,11 +100,10 @@ public class RobotEx {
         this.dashTelemetry = dashboard.getTelemetry();
 
         /////////////////////////////////////////// Drive //////////////////////////////////////////
-        drive = new MecanumDriveSubsystem(hardwareMap, type, RobotConstants, startingPose);
+        drive = new MecanumDriveSubsystem(hardwareMap, telemetry, type, RobotConstants, startingPose);
 
         //////////////////////////////////////////// IMU ///////////////////////////////////////////
-        gyro = new IMUEmmulatedSubsystem(hardwareMap, telemetry, getMotors()[0], getMotors()[3],
-                startingPose.getHeading());
+        gyro = new IMUEmmulatedSubsystem(telemetry, getMotors()[0], getMotors()[3], startingPose.getHeading());
         CommandScheduler.getInstance().registerSubsystem(gyro);
     }
 
@@ -148,19 +152,26 @@ public class RobotEx {
                 new InstantCommand(() -> gyroFollow.setGyroTarget(gyroTargetSubsystem.getAngle()), gyroFollow));
 
         driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new InstantCommand(drive::toggleMode, drive));
-//                .whenPressed(new InstantCommand(gyroFollow::toggleState, gyroFollow));
+                .whenPressed(new InstantCommand(gyroFollow::toggleState, gyroFollow));
+
+        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
+                .whenPressed(new InstantCommand(drive::setFieldCentric, drive));
+
+        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
+                .whenPressed(new InstantCommand(drive::setRobotCentric, drive));
 
         if (this.initDistance) {
             distanceSensor = new DistanceSensorEx(hardwareMap, "distance_sensor");
             distanceFollow = new ForwardControllerSubsystem(() -> distanceSensor.getDistance(DistanceUnit.MM), 250, telemetry);
 
+            // Backdrop Aligment
             driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                     .whenPressed(
                             new ParallelCommandGroup(
                                     new SequentialCommandGroup(
+                                            new InstantCommand(drive::setRobotCentric),
                                             new InstantCommand(gyroFollow::enable, gyroFollow),
-                                            new InstantCommand(() -> gyroFollow.setGyroTarget(0), gyroFollow)
+                                            new InstantCommand(() -> gyroFollow.setGyroTarget(90), gyroFollow)
                                     ),
                                     new InstantCommand(distanceFollow::enable, distanceFollow)
                             )
@@ -169,6 +180,7 @@ public class RobotEx {
             driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                     .whenReleased(
                             new ParallelCommandGroup(
+                                    new InstantCommand(drive::setFieldCentric),
                                     new InstantCommand(gyroFollow::disable, gyroFollow),
                                     new InstantCommand(distanceFollow::disable, distanceFollow)
                             )

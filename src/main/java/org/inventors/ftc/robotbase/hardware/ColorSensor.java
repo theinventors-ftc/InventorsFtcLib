@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -53,6 +54,11 @@ public class ColorSensor extends SubsystemBase {
         }
 
         return value;
+    }
+
+    public double[] getNormalizedColors() {
+        NormalizedRGBA colors = sensor.getNormalizedColors();
+        return new double[]{Math.floor(colors.red*100), Math.floor(colors.green*100), Math.floor(colors.blue*100), Math.floor(colors.alpha*100)};
     }
 
     //    Returns a double [0, 100) describing the concentration of Red Color

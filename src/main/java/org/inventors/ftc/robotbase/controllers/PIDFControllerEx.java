@@ -23,11 +23,13 @@ public class PIDFControllerEx {
     private double lastTimeStamp;
     private double period;
 
+    private double deadzone;
+
     /**
      * The base constructor for the PIDF controller
      */
-    public PIDFControllerEx(double kp, double ki, double kd, double kf, double alpha, double integralWorkingBounds, double integralClippingBounds) {
-        this(kp, ki, kd, kf, 0, 0, alpha, integralWorkingBounds, integralClippingBounds);
+    public PIDFControllerEx(double kp, double ki, double kd, double kf, double alpha, double deadzone, double integralWorkingBounds, double integralClippingBounds) {
+        this(kp, ki, kd, kf, 0, 0, alpha, deadzone, integralWorkingBounds, integralClippingBounds);
     }
 
     /**
@@ -39,7 +41,7 @@ public class PIDFControllerEx {
      * @param pv The measured value of he pid control loop. We want sp = pv, or to the degree
      *           such that sp - pv, or e(t) < tolerance.
      */
-    public PIDFControllerEx(double kp, double ki, double kd, double kf, double sp, double pv, double alpha, double integralWorkingBounds, double integralClippingBounds) {
+    public PIDFControllerEx(double kp, double ki, double kd, double kf, double sp, double pv, double alpha, double deadzone, double integralWorkingBounds, double integralClippingBounds) {
         kP = kp;
         kI = ki;
         kD = kd;
@@ -64,6 +66,8 @@ public class PIDFControllerEx {
         filter = new IIRSubsystem(alpha, () -> errorVal_p);
 
         this.setIntegrationBounds(-integralClippingBounds, integralClippingBounds);
+
+        this.deadzone = deadzone;
 
         reset();
     }
@@ -220,7 +224,7 @@ public class PIDFControllerEx {
         }
 
         // returns u(t)
-        return kP * errorVal_p + kI * totalError + kD * errorVal_v + kF * setPoint;
+        return Math.abs(getPositionError()) > deadzone ? kP * errorVal_p + kI * totalError + kD * errorVal_v + kF * setPoint : 0;
     }
 
     public void setPIDF(double kp, double ki, double kd, double kf) {

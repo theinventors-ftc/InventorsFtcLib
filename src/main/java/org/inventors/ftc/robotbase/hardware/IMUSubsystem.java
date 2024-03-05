@@ -11,8 +11,6 @@ public class IMUSubsystem extends SubsystemBase {
     private double previousRawYaw = 0;
     private double turns = 0;
     private double rawYaw = 0, rawPitch = 0, rawRoll = 0;
-    private double[] accel;
-    private double maxAccelX, maxAccelY, maxAccelZ;
     private double contYaw;
     private Timer timer;
     private double in_time;
