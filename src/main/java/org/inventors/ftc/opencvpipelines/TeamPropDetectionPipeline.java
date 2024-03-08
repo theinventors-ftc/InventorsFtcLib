@@ -17,7 +17,7 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
     }
 
     public Alliance allianceType = Alliance.RED;
-    public double threshold = 60;
+    public double threshold = 40;
 
     Mat blurred = new Mat();
     Mat redChannel = new Mat();
@@ -47,8 +47,8 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
 //    Rect centerRect = new Rect(640, 440, 1120-640, 800-440);
 //    Rect rightRect = new Rect(1280, 430, 1598-1280, 890-430);
 
-    Rect leftRect = new Rect(40, 270, 400, 360);
-    Rect centerRect = new Rect(520, 250, 320, 319);
+    Rect leftRect = new Rect(40, 420, 400, 290);
+    Rect centerRect = new Rect(520, 350, 320, 319);
     Rect rightRect = new Rect(900, 310, 300, 400);
 
     double leftMean = 0.0, centerMean = 0.0, rightMean = 0.0;
@@ -136,7 +136,7 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
 //        telemetry.addData("Left Mean: ", leftMean);
 //        telemetry.addData("Center Mean: ", centerMean);
 //        telemetry.addData("Right Mean: ", rightMean);
-//        telemetry.addData("Position: ", getPropPosition());
+        telemetry.addData("Position: ", getPropPosition());
 //        telemetry.update();
 //
 //        telemetry.addData("Width", input.cols());
