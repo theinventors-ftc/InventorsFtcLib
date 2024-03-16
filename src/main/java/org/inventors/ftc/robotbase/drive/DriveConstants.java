@@ -34,8 +34,6 @@ public class DriveConstants {
     public static double GEAR_RATIO = 0.99639; // output (wheel) speed / input (motor) speed
     public static double TRACK_WIDTH = 11.54; // in
 
-    public static double LATERAL_MULTIPLIER = 1.17602326;
-
     public static boolean frontLeftInverted = true, frontRightInverted = true, rearRightInverted = true, rearLeftInverted = true;
     public static boolean frontLeftAutonomousInverted = true, frontRightAutonomousInverted = false, rearRightAutonomousInverted = false, rearLeftAutonomousInverted = true;
 

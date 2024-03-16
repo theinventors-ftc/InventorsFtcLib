@@ -8,12 +8,12 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 
 import java.util.function.DoubleSupplier;
 
-public class IIRSystem extends SubsystemBase {
+public class IIRSubsystem extends SubsystemBase {
     DoubleSupplier value;
     double smoothing_constant;
     double smoothed_value;
 
-    public IIRSystem(double smoothing_constant, DoubleSupplier value){
+    public IIRSubsystem(double smoothing_constant, DoubleSupplier value){
         this.value = value;
         this.smoothing_constant = smoothing_constant;
     }
@@ -21,7 +21,7 @@ public class IIRSystem extends SubsystemBase {
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void periodic() {
-        smoothed_value = smoothing_constant * value.getAsDouble() + (1-smoothing_constant) * smoothed_value;
+        smoothed_value = (1-smoothing_constant) * value.getAsDouble() + smoothing_constant * smoothed_value;
     }
 
     public void set(double new_smoothing_constant){
