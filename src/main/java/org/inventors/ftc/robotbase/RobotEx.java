@@ -94,6 +94,8 @@ public class RobotEx {
         }
     }
 
+    //
+
     public void initCommon(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, OpModeType type, Pose2d startingPose) {
         ////////////////////////////////////////// Camera //////////////////////////////////////////
         this.dashboard = FtcDashboard.getInstance();
