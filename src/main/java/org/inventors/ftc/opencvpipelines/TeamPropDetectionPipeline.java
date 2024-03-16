@@ -16,6 +16,7 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
     }
 
     public Alliance allianceType = Alliance.RED;
+
     public double threshold = 40;
 
     Mat blurred = new Mat();
@@ -23,31 +24,25 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
     Mat greenChannel = new Mat();
     Mat blueChannel = new Mat();
 
-    // ------------------------------------ For Red Detection
-    // ----------------------------------- //
+    // ------------------------------------ For Red Detection ----------------------------------- //
     Mat redGreenDif = new Mat();
     Mat redBlueDif = new Mat();
     Mat redGreenThresh = new Mat();
     Mat redBlueThresh = new Mat();
 
-    // ----------------------------------- For Blue Detection
-    // ----------------------------------- //
+    // ----------------------------------- For Blue Detection ----------------------------------- //
     Mat blueGreenDif = new Mat();
     Mat blueRedDif = new Mat();
     Mat blueGreenThresh = new Mat();
     Mat blueRedThresh = new Mat();
 
-    // ------------------------------------------------------------------------------------------
-    // //
+    // ------------------------------------------------------------------------------------------ //
+
     Mat thresh = new Mat();
 
     Mat leftROI = new Mat();
     Mat centerROI = new Mat();
     Mat rightROI = new Mat();
-
-    // Rect leftRect = new Rect(40, 440, 460-40, 850-440);
-    // Rect centerRect = new Rect(640, 440, 1120-640, 800-440);
-    // Rect rightRect = new Rect(1280, 430, 1598-1280, 890-430);
 
     Rect leftRect = new Rect(40, 420, 400, 290);
     Rect centerRect = new Rect(520, 350, 320, 319);
@@ -90,7 +85,7 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
         Core.extractChannel(blurred, redChannel, 0);
         Core.extractChannel(blurred, greenChannel, 1);
         Core.extractChannel(blurred, blueChannel, 2);
-        //
+
         if (allianceType == Alliance.RED) {
             Core.subtract(redChannel, greenChannel, redGreenDif);
             Core.subtract(redChannel, blueChannel, redBlueDif);

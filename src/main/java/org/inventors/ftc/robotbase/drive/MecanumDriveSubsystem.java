@@ -51,7 +51,6 @@ public class MecanumDriveSubsystem extends SubsystemBase {
             resetEncoders();
         }
 
-
         setZeroPowerBehavior(MotorExEx.ZeroPowerBehavior.BRAKE);
 
         if (RobotConstants.RUN_USING_ENCODER && RobotConstants.MOTOR_VELO_PID != null) {
@@ -103,7 +102,7 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         telemetry.addData("Y: ", localizer.getPoseEstimate().getY());
 //        telemetry.addData("Heading (Pose): ", Math.toDegrees(localizer.getPoseEstimate().getHeading()));
     }
-
+  
     /* ----------------------------------------- TELEOP ----------------------------------------- */
     private MotorExEx frontLeft, frontRight, rearRight, rearLeft;
     private IMU imu;
@@ -156,9 +155,11 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         for (MotorExEx motor : motors)
             motor.setRunMode(mode);
     }
+
     public void resetEncoders() {
         for (MotorExEx motor : motors) motor.resetEncoder();
     }
+
     public void setZeroPowerBehavior(MotorExEx.ZeroPowerBehavior zeroPowerBehavior)
     {
         for (MotorExEx motor : motors)
@@ -186,4 +187,5 @@ public class MecanumDriveSubsystem extends SubsystemBase {
     public void setRobotCentric() {
         fieldCentricEnabled = false;
     }
+
 }

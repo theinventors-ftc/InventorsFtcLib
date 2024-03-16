@@ -58,7 +58,6 @@ public class HeadingControllerSubsystem extends SubsystemBase {
         this.getCameraObject_x = getCameraObject_x;
         fType = Type.CAMERA;
     }
-
     @Override
     public void periodic() {
         telemetry.addData("Gyro: ", gyroValue.getAsDouble());
@@ -101,25 +100,6 @@ public class HeadingControllerSubsystem extends SubsystemBase {
         target = minDistIdx * 360 + targetOrient;
         controller.setSetPoint(target);
     }
-//    public void setGyroTarget(double targetOrient) {
-//        double gyroValueDouble = gyroValue.getAsDouble();
-//        double dist, minDist;
-//        int minDistIdx, maxIdx;
-//
-//        minDistIdx = 0;
-//        minDist = Math.abs(targetOrient - gyroValueDouble);
-//        maxIdx = (int) Math.ceil(Math.abs(gyroValueDouble) / 360);
-//        for (int i = maxIdx - 2; i <= maxIdx; i++) {
-//            dist = Math.abs(i * 360 + targetOrient - gyroValueDouble);
-//            if (dist < minDist) {
-//                minDistIdx = i;
-//                minDist = dist;
-//            }
-//        }
-//
-//        target = minDistIdx * 360 + targetOrient;
-//        controller.setSetPoint(target);
-//    }
 
     public double getTarget() {
         return target;

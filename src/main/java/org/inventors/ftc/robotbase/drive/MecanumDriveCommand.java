@@ -29,7 +29,7 @@ public class MecanumDriveCommand extends CommandBase {
         this.slowTrigger = slowTrigger;
 
         this.telemetry = telemetry;
-
+      
         addRequirements(this.drivetrain);
     }
 

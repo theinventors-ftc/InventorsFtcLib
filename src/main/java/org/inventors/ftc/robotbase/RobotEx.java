@@ -1,5 +1,7 @@
 package org.inventors.ftc.robotbase;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -65,7 +67,6 @@ public class RobotEx {
 
     protected Telemetry telemetry, dashTelemetry;
 
-
     @RequiresApi(api = Build.VERSION_CODES.N)
     public RobotEx(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
                    GamepadExEx toolOp) {
@@ -104,6 +105,7 @@ public class RobotEx {
 
         //////////////////////////////////////////// IMU ///////////////////////////////////////////
         gyro = new IMUEmmulatedSubsystem(telemetry, getMotors()[0], getMotors()[3], startingPose.getHeading());
+
         CommandScheduler.getInstance().registerSubsystem(gyro);
     }
 
@@ -228,6 +230,18 @@ public class RobotEx {
         }
 
         return turnPower;
+    }
+
+    public MotorExEx[] getMotors() {
+        return drive.getMotors();
+    }
+
+    public Telemetry getTelemetry() {
+        return telemetry;
+    }
+
+    public Telemetry getDashboardTelemetry() {
+        return dashTelemetry;
     }
 
     public MotorExEx[] getMotors() {

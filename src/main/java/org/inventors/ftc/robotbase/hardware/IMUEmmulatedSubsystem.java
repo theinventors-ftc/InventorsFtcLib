@@ -22,15 +22,18 @@ public class IMUEmmulatedSubsystem extends SubsystemBase {
 
     private final double proportion = 0.003237;
 
+
     public IMUEmmulatedSubsystem(Telemetry telemetry, MotorExEx leftEncoderMotor,
                                  MotorExEx rightEncoderMotor, double startingHeading) {
         this.telemetry = telemetry;
+
         leftEncoder = leftEncoderMotor.getRawMotor();
         rightEncoder = rightEncoderMotor.getRawMotor();
 
         leftPos = leftEncoder.getCurrentPosition()*-1;
         rightPos = rightEncoder.getCurrentPosition();
         diff = rightPos-leftPos;
+
         yawInit = diff*proportion - startingHeading;
     }
 
@@ -54,7 +57,6 @@ public class IMUEmmulatedSubsystem extends SubsystemBase {
     public double getPitch() {
         return 0;
     }
-
 
     public int findClosestOrientationTarget() {
         int minDistIdx;
