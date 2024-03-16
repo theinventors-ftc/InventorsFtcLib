@@ -30,34 +30,37 @@ public class HeadingControllerSubsystem extends SubsystemBase {
 
     private final double kP;
     private final double kI = 0;
-    private final double kD = 0;
+    private final double kD = 0.001;
 
-    PIDController controller;
+    private IIRSubsystem gyro_filter;
+
+    PIDFControllerEx controller;
 
     private Telemetry telemetry;
 
     public HeadingControllerSubsystem(DoubleSupplier gyroValue,
                                       IntSupplier closestOrientationTarget,
                                       Telemetry telemetry) {
-        kP = 0.06;
-        controller = new PIDController(kP, kI, kD);
-        this.gyroValue = gyroValue;
+//        kP = 0.06;
+        kP = 0.02;
+        controller = new PIDFControllerEx(kP, kI, kD, 0, 0, 1, 0, 0);
+        this.gyro_filter = new IIRSubsystem(0, gyroValue);
+        this.gyroValue = () -> gyro_filter.get();
         this.closestOrientationTarget = closestOrientationTarget;
         fType = Type.GYRO;
 
         this.telemetry = telemetry;
     }
 
+    public HeadingControllerSubsystem(DoubleSupplier getCameraObject_x) {
+        kP = 0.55;
+        controller = new PIDFControllerEx(kP, kI, kD, 0, 0.75, 0, 0, 0);
+        this.getCameraObject_x = getCameraObject_x;
+        fType = Type.CAMERA;
+    }
     @Override
     public void periodic() {
         telemetry.addData("Gyro: ", gyroValue.getAsDouble());
-    }
-
-    public HeadingControllerSubsystem(DoubleSupplier getCameraObject_x) {
-        kP = 0.6;
-        controller = new PIDController(kP, kI, kD);
-        this.getCameraObject_x = getCameraObject_x;
-        fType = Type.CAMERA;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -72,7 +75,7 @@ public class HeadingControllerSubsystem extends SubsystemBase {
                 target = closestOrientationTarget.getAsInt();
                 findClosestTarget = false;
             }
-            curValue = gyroValue.getAsDouble(); // Minus for encoders
+            curValue = gyroValue.getAsDouble();
         }
 
         return controller.calculate(curValue);
@@ -97,25 +100,6 @@ public class HeadingControllerSubsystem extends SubsystemBase {
         target = minDistIdx * 360 + targetOrient;
         controller.setSetPoint(target);
     }
-//    public void setGyroTarget(double targetOrient) {
-//        double gyroValueDouble = gyroValue.getAsDouble();
-//        double dist, minDist;
-//        int minDistIdx, maxIdx;
-//
-//        minDistIdx = 0;
-//        minDist = Math.abs(targetOrient - gyroValueDouble);
-//        maxIdx = (int) Math.ceil(Math.abs(gyroValueDouble) / 360);
-//        for (int i = maxIdx - 2; i <= maxIdx; i++) {
-//            dist = Math.abs(i * 360 + targetOrient - gyroValueDouble);
-//            if (dist < minDist) {
-//                minDistIdx = i;
-//                minDist = dist;
-//            }
-//        }
-//
-//        target = minDistIdx * 360 + targetOrient;
-//        controller.setSetPoint(target);
-//    }
 
     public double getTarget() {
         return target;
@@ -123,6 +107,16 @@ public class HeadingControllerSubsystem extends SubsystemBase {
 
     public void toggleState() {
         enabled = !enabled;
+        findClosestTarget = enabled || findClosestTarget;
+    }
+
+    public void enable() {
+        enabled = true;
+        findClosestTarget = enabled || findClosestTarget;
+    }
+
+    public void disable() {
+        enabled = false;
         findClosestTarget = enabled || findClosestTarget;
     }
 }

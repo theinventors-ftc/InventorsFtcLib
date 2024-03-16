@@ -3,8 +3,8 @@ package org.inventors.ftc.robotbase.drive;
 import static org.inventors.ftc.robotbase.RobotEx.OpModeType.TELEOP;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.inventors.ftc.robotbase.hardware.MotorExEx;
 import org.inventors.ftc.robotbase.RobotEx;
 
@@ -25,18 +26,18 @@ import java.util.List;
 public class MecanumDriveSubsystem extends SubsystemBase {
     static DriveConstants RobotConstants;
 
-    public MecanumDriveSubsystem(HardwareMap hardwareMap, RobotEx.OpModeType type, DriveConstants robotConstants) {
+    static StandardTrackingWheelLocalizer localizer;
+
+    static Telemetry telemetry;
+
+    public MecanumDriveSubsystem(HardwareMap hardwareMap, Telemetry telemetry, RobotEx.OpModeType type, DriveConstants robotConstants, Pose2d startingPose) {
         this.RobotConstants = robotConstants;
+        this.telemetry = telemetry;
+
+        localizer = new StandardTrackingWheelLocalizer(hardwareMap, new ArrayList<Integer>(), new ArrayList<Integer>());
+        localizer.setPoseEstimate(startingPose);
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
-
-        // TODO: adjust the names of the following hardware devices to match your configuration
-        imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT
-        ));
-        imu.initialize(parameters);
 
         frontLeft = new MotorExEx(hardwareMap, "frontLeft", Motor.GoBILDA.RPM_312);
         frontRight = new MotorExEx(hardwareMap, "frontRight", Motor.GoBILDA.RPM_312);
@@ -45,8 +46,10 @@ public class MecanumDriveSubsystem extends SubsystemBase {
 
         motors = Arrays.asList(frontLeft, frontRight, rearLeft, rearRight);
 
-        if (RobotConstants.RUN_USING_ENCODER) setMode(MotorExEx.RunMode.VelocityControl);
-
+        if (RobotConstants.RUN_USING_ENCODER) {
+            setMode(MotorExEx.RunMode.VelocityControl);
+            resetEncoders();
+        }
 
         setZeroPowerBehavior(MotorExEx.ZeroPowerBehavior.BRAKE);
 
@@ -91,6 +94,15 @@ public class MecanumDriveSubsystem extends SubsystemBase {
             );
         }
     }
+
+    @Override
+    public void periodic() {
+        localizer.update();
+        telemetry.addData("X: ", localizer.getPoseEstimate().getX());
+        telemetry.addData("Y: ", localizer.getPoseEstimate().getY());
+//        telemetry.addData("Heading (Pose): ", Math.toDegrees(localizer.getPoseEstimate().getHeading()));
+    }
+  
     /* ----------------------------------------- TELEOP ----------------------------------------- */
     private MotorExEx frontLeft, frontRight, rearRight, rearLeft;
     private IMU imu;
@@ -98,6 +110,8 @@ public class MecanumDriveSubsystem extends SubsystemBase {
     private VoltageSensor batteryVoltageSensor;
     protected String m_name = this.getClass().getSimpleName();
     private com.arcrobotics.ftclib.drivebase.MecanumDrive drive;
+
+    private boolean fieldCentricEnabled = true;
 
     public String getName()
     {
@@ -118,8 +132,14 @@ public class MecanumDriveSubsystem extends SubsystemBase {
     void drive(double strafeSpeed, double forwardSpeed, double turnSpeed, double heading, double fast_input, double slow_input)
     {
         drive.setMaxSpeed(RobotConstants.DEFAULT_SPEED_PERC + fast_input * RobotConstants.FAST_SPEED_PERC - slow_input * RobotConstants.SLOW_SPEED_PERC);
-        drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, heading);
+
+        if (fieldCentricEnabled) {
+            drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, heading);
+        } else {
+            drive.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed);
+        }
     }
+
     public void setMotorsInverted(
             boolean leftFrontInverted, boolean rightFrontInverted,
             boolean rightRearInverted, boolean leftRearInverted
@@ -135,6 +155,11 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         for (MotorExEx motor : motors)
             motor.setRunMode(mode);
     }
+
+    public void resetEncoders() {
+        for (MotorExEx motor : motors) motor.resetEncoder();
+    }
+
     public void setZeroPowerBehavior(MotorExEx.ZeroPowerBehavior zeroPowerBehavior)
     {
         for (MotorExEx motor : motors)
@@ -151,4 +176,16 @@ public class MecanumDriveSubsystem extends SubsystemBase {
     public MotorExEx[] getMotors() {
         return new MotorExEx[]{frontLeft, frontRight, rearLeft, rearRight};
     }
+
+    public void toggleMode() {
+        fieldCentricEnabled = !fieldCentricEnabled;
+    }
+
+    public void setFieldCentric() {
+        fieldCentricEnabled = true;
+    }
+    public void setRobotCentric() {
+        fieldCentricEnabled = false;
+    }
+
 }

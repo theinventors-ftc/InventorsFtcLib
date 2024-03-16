@@ -3,7 +3,6 @@ package org.inventors.ftc.opencvpipelines;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfFloat;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -17,7 +16,8 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
     }
 
     public Alliance allianceType = Alliance.RED;
-    public double threshold = 60;
+
+    public double threshold = 40;
 
     Mat blurred = new Mat();
     Mat redChannel = new Mat();
@@ -37,18 +37,15 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
     Mat blueRedThresh = new Mat();
 
     // ------------------------------------------------------------------------------------------ //
+
     Mat thresh = new Mat();
 
     Mat leftROI = new Mat();
     Mat centerROI = new Mat();
     Mat rightROI = new Mat();
 
-//    Rect leftRect = new Rect(40, 440, 460-40, 850-440);
-//    Rect centerRect = new Rect(640, 440, 1120-640, 800-440);
-//    Rect rightRect = new Rect(1280, 430, 1598-1280, 890-430);
-
-    Rect leftRect = new Rect(40, 270, 400, 360);
-    Rect centerRect = new Rect(520, 250, 320, 319);
+    Rect leftRect = new Rect(40, 420, 400, 290);
+    Rect centerRect = new Rect(520, 350, 320, 319);
     Rect rightRect = new Rect(900, 310, 300, 400);
 
     double leftMean = 0.0, centerMean = 0.0, rightMean = 0.0;
@@ -56,17 +53,6 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
     Telemetry telemetry;
 
     double blurAmount = 0.0;
-
-    public TeamPropDetectionPipeline(Telemetry telemetry, Alliance allianceType, double threshhold,
-                                     double blurAmount, Rect leftRect, Rect centerRect, Rect rightRect) {
-        this.telemetry = telemetry;
-        this.allianceType = allianceType;
-        this.threshold = threshhold;
-        this.blurAmount = blurAmount;
-        this.leftRect = leftRect;
-        this.centerRect = centerRect;
-        this.rightRect = rightRect;
-    }
 
     public TeamPropDetectionPipeline(Telemetry telemetry, Alliance allianceType, double threshhold,
                                      double blurAmount) {
@@ -99,7 +85,7 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
         Core.extractChannel(blurred, redChannel, 0);
         Core.extractChannel(blurred, greenChannel, 1);
         Core.extractChannel(blurred, blueChannel, 2);
-//
+
         if (allianceType == Alliance.RED) {
             Core.subtract(redChannel, greenChannel, redGreenDif);
             Core.subtract(redChannel, blueChannel, redBlueDif);
@@ -110,7 +96,7 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
 
             // Combine Binary Images
             Core.bitwise_and(redGreenThresh, redBlueThresh, thresh);
-        } else if(allianceType == Alliance.BLUE) {
+        } else if (allianceType == Alliance.BLUE) {
             Core.subtract(blueChannel, greenChannel, blueGreenDif);
             Core.subtract(blueChannel, redChannel, blueRedDif);
 
@@ -133,15 +119,10 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
         rightMean = Core.mean(rightROI).val[0];
 
         // Print Data (only for experimenting)
-//        telemetry.addData("Left Mean: ", leftMean);
-//        telemetry.addData("Center Mean: ", centerMean);
-//        telemetry.addData("Right Mean: ", rightMean);
-//        telemetry.addData("Position: ", getPropPosition());
-//        telemetry.update();
-//
-//        telemetry.addData("Width", input.cols());
-//        telemetry.addData("Height", input.rows());
-//        telemetry.update();
+        telemetry.addData("Left Mean: ", leftMean);
+        telemetry.addData("Center Mean: ", centerMean);
+        telemetry.addData("Right Mean: ", rightMean);
+        telemetry.addData("Position: ", getPropPosition());
 
         return thresh;
     }
@@ -150,9 +131,10 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
         this.threshold = newThreshold;
     }
 
-    // This function returns the Position of the Team Prop. 0 -> Left, 1 -> Center, 2 -> Right
+    // This function returns the Position of the Team Prop. 0 -> Left, 1 -> Center,
+    // 2 -> Right
     public int getPropPosition() {
-        double[] means = {leftMean, centerMean, rightMean};
+        double[] means = { leftMean, centerMean, rightMean };
 
         int indexOfLargest = 0;
         double max = means[0];

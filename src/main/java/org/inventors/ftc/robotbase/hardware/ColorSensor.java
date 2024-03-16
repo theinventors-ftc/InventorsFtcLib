@@ -4,6 +4,8 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -15,6 +17,8 @@ public class ColorSensor extends SubsystemBase {
 
     public ColorSensor(HardwareMap hm, String id) {
         this.sensor = hm.get(NormalizedColorSensor.class, id);
+
+        sensor.setGain(10);
     }
 
     public void setLight(Boolean state) {
@@ -53,23 +57,28 @@ public class ColorSensor extends SubsystemBase {
         return value;
     }
 
-    //    Returns a double [0, 1) describing the concentration of Red Color
-    public double getRed() {
-        return sensor.getNormalizedColors().red;
+    public double[] getNormalizedColors() {
+        NormalizedRGBA colors = sensor.getNormalizedColors();
+        return new double[]{Math.floor(colors.red*100), Math.floor(colors.green*100), Math.floor(colors.blue*100), Math.floor(colors.alpha*100)};
     }
-    //    Returns a double [0, 1) describing the concentration of Green Color
+
+    //    Returns a double [0, 100) describing the concentration of Red Color
+    public double getRed() {
+        return Math.floor(sensor.getNormalizedColors().red*100);
+    }
+    //    Returns a double [0, 100) describing the concentration of Green Color
 
     public double getGreen() {
-        return sensor.getNormalizedColors().green;
+        return Math.floor(sensor.getNormalizedColors().green*100);
     }
 
-    //    Returns a double [0, 1) describing the concentration of Blue Color
+    //    Returns a double [0, 100) describing the concentration of Blue Color
     public double getBlue() {
-        return sensor.getNormalizedColors().blue;
+        return Math.floor(sensor.getNormalizedColors().blue*100);
     }
 
-    //    Returns a double [0, 1) describing the concentration of Alpha Value
+    //    Returns a double [0, 100) describing the concentration of Alpha Value
     public double getAlpha() {
-        return sensor.getNormalizedColors().alpha;
+        return Math.floor(sensor.getNormalizedColors().alpha*100);
     }
 }
