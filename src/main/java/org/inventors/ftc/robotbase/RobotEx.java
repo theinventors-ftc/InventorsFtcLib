@@ -243,16 +243,4 @@ public class RobotEx {
     public Telemetry getDashboardTelemetry() {
         return dashTelemetry;
     }
-
-    public MotorExEx[] getMotors() {
-        return drive.getMotors();
-    }
-
-    public Telemetry getTelemetry() {
-        return telemetry;
-    }
-
-    public Telemetry getDashboardTelemetry() {
-        return dashTelemetry;
-    }
 }

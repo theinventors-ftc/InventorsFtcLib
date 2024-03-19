@@ -84,8 +84,7 @@ public class RevIMU implements HardwareDevice {
      * Initializes gyro with custom parameters.
      */
     public void init(IMU.Parameters parameters) {
-        revIMU.initialize(parameters);
-        revIMU.resetYaw();
+
         resetPitch();
         resetRoll();
         globalHeading = 0;
