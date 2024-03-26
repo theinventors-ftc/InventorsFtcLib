@@ -17,7 +17,7 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
 
     public Alliance allianceType = Alliance.RED;
 
-    public double threshold = 40;
+    public double threshold = 60;
 
     Mat blurred = new Mat();
     Mat redChannel = new Mat();

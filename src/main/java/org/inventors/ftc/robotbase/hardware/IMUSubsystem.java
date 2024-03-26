@@ -1,5 +1,6 @@
 package org.inventors.ftc.robotbase.hardware;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -19,13 +20,17 @@ public class IMUSubsystem extends SubsystemBase {
 
     private Telemetry telemetry;
 
-    public IMUSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
-        imu = new RevIMU(hardwareMap);
+    private Pose2d startingPose;
+
+    public IMUSubsystem(HardwareMap hardwareMap, Telemetry telemetry, String imuName, Pose2d startingPose) {
+        imu = new RevIMU(hardwareMap, imuName);
         imu.init();
         timer = new Timer(0);
         timer.start();
 
         this.telemetry = telemetry;
+
+        this.startingPose = startingPose;
     }
 
     public void periodic() {

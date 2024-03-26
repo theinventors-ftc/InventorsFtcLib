@@ -1,7 +1,5 @@
 package org.inventors.ftc.robotbase;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -21,14 +19,13 @@ import org.inventors.ftc.opencvpipelines.TeamPropDetectionPipeline;
 import org.inventors.ftc.robotbase.controllers.ForwardControllerSubsystem;
 import org.inventors.ftc.robotbase.controllers.HeadingControllerSubsystem;
 import org.inventors.ftc.robotbase.controllers.HeadingControllerTargetSubsystem;
-import org.inventors.ftc.robotbase.drive.StandardTrackingWheelLocalizer;
 import org.inventors.ftc.robotbase.drive.DriveConstants;
 import org.inventors.ftc.robotbase.drive.MecanumDriveCommand;
 import org.inventors.ftc.robotbase.drive.MecanumDriveSubsystem;
 import org.inventors.ftc.robotbase.hardware.Camera;
 import org.inventors.ftc.robotbase.hardware.DistanceSensorEx;
 import org.inventors.ftc.robotbase.hardware.GamepadExEx;
-import org.inventors.ftc.robotbase.hardware.IMUEmmulatedSubsystem;
+import org.inventors.ftc.robotbase.hardware.IMUSubsystem;
 import org.inventors.ftc.robotbase.hardware.MotorExEx;
 
 import java.util.ArrayList;
@@ -62,7 +59,7 @@ public class RobotEx {
     protected final Boolean initCamera;
     protected final Boolean initDistance;
 
-    protected IMUEmmulatedSubsystem gyro;
+    protected IMUSubsystem gyro;
     protected DistanceSensorEx distanceSensor;
 
     protected Telemetry telemetry, dashTelemetry;
@@ -70,12 +67,13 @@ public class RobotEx {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public RobotEx(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
                    GamepadExEx toolOp) {
-        this(hardwareMap, RobotConstants, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, false, new Pose2d(0, 0, 0));
+        this(hardwareMap, RobotConstants, telemetry, driverOp, toolOp, OpModeType.TELEOP, "imu",
+                false, false, new Pose2d(0, 0, 0));
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public RobotEx(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
-                   GamepadExEx toolOp, OpModeType type, Boolean initCamera, Boolean initDistance, Pose2d startingPose
+                   GamepadExEx toolOp, OpModeType type, String imuName, Boolean initCamera, Boolean initDistance, Pose2d startingPose
     ) {
         this.initCamera = initCamera;
         this.initDistance = initDistance;
@@ -83,7 +81,7 @@ public class RobotEx {
         initCommon(hardwareMap, RobotConstants, telemetry, type, startingPose);
 
         if (type == OpModeType.TELEOP) {
-            initTele(hardwareMap, driverOp, toolOp);
+            initTele(hardwareMap, telemetry, driverOp, toolOp, imuName, startingPose);
             opModeType = OpModeType.TELEOP;
         } else {
             initAuto(hardwareMap);
@@ -102,11 +100,6 @@ public class RobotEx {
 
         /////////////////////////////////////////// Drive //////////////////////////////////////////
         drive = new MecanumDriveSubsystem(hardwareMap, telemetry, type, RobotConstants, startingPose);
-
-        //////////////////////////////////////////// IMU ///////////////////////////////////////////
-        gyro = new IMUEmmulatedSubsystem(telemetry, getMotors()[0], getMotors()[3], startingPose.getHeading());
-
-        CommandScheduler.getInstance().registerSubsystem(gyro);
     }
 
     public void initAuto(HardwareMap hardwareMap) {
@@ -118,11 +111,16 @@ public class RobotEx {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void initTele(HardwareMap hardwareMap, GamepadExEx driverOp,
-                         GamepadExEx toolOp) {
+    public void initTele(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
+                         GamepadExEx toolOp, String imuName, Pose2d startingPose) {
         ///////////////////////////////////////// Gamepads /////////////////////////////////////////
         this.driverOp = driverOp;
         this.toolOp = toolOp;
+
+        //////////////////////////////////////////// IMU ///////////////////////////////////////////
+        gyro = new IMUSubsystem(hardwareMap, telemetry,  imuName, startingPose);
+
+        CommandScheduler.getInstance().registerSubsystem(gyro);
 
         //////////////////////////////////////// Drivetrain ////////////////////////////////////////
         driveCommand = new MecanumDriveCommand(drive, this::drivetrainForward,
@@ -202,21 +200,24 @@ public class RobotEx {
     }
 
     public double drivetrainStrafe() {
-        double factor = distanceFollow.isEnabled() ? 0.3 : 1; // This lowers the max power in backdrop alignment for accuracy
+        double factor = 1; // This lowers the max power in backdrop alignment for accuracy
+        if(distanceFollow != null){
+            if (distanceFollow.isEnabled()) {
+                factor = distanceFollow.isEnabled() ? 0.3 : 1;
+            }
+        }
         return driverOp.getLeftX() * factor;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public double drivetrainForward() {
-        double forwardPower;
-
-        if (distanceFollow.isEnabled()) {
-            forwardPower = distanceFollow.calculateOutput();
-        } else {
-            forwardPower = driverOp.getLeftY();
+        if(distanceFollow != null){
+            if (distanceFollow.isEnabled()) {
+                return distanceFollow.calculateOutput();
+            }
         }
 
-        return forwardPower;
+        return driverOp.getLeftY();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
