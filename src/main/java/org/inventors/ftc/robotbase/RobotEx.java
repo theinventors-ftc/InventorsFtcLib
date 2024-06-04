@@ -21,7 +21,6 @@ import org.inventors.ftc.opencvpipelines.TeamPropDetectionPipeline;
 import org.inventors.ftc.robotbase.controllers.ForwardControllerSubsystem;
 import org.inventors.ftc.robotbase.controllers.HeadingControllerSubsystem;
 import org.inventors.ftc.robotbase.controllers.HeadingControllerTargetSubsystem;
-import org.inventors.ftc.robotbase.drive.StandardTrackingWheelLocalizer;
 import org.inventors.ftc.robotbase.drive.DriveConstants;
 import org.inventors.ftc.robotbase.drive.MecanumDriveCommand;
 import org.inventors.ftc.robotbase.drive.MecanumDriveSubsystem;
@@ -34,6 +33,7 @@ import org.inventors.ftc.robotbase.hardware.MotorExEx;
 import org.opencv.core.Rect;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RobotEx {
     // enum to specify opmode type
@@ -109,7 +109,7 @@ public class RobotEx {
         this.dashTelemetry = dashboard.getTelemetry();
 
         /////////////////////////////////////////// Drive //////////////////////////////////////////
-        drive = new MecanumDriveSubsystem(hardwareMap, telemetry, type, RobotConstants, startingPose);
+        drive = new MecanumDriveSubsystem(hardwareMap, telemetry, type, RobotConstants);
 
         //////////////////////////////////////////// IMU ///////////////////////////////////////////
         gyro = new IMUSubsystem(hardwareMap, telemetry, imuId,
@@ -251,5 +251,17 @@ public class RobotEx {
 
     public Telemetry getDashboardTelemetry() {
         return dashTelemetry;
+    }
+
+    public double getHeading() {
+        return gyro.getRawYaw();
+    }
+
+    public double getContinuousHeading() {
+        return gyro.getYaw();
+    }
+
+    public double getHeadingVelocity() {
+        return 0.0; // TODO: Implement
     }
 }

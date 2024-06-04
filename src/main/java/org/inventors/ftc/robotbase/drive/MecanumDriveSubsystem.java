@@ -7,9 +7,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -26,23 +24,18 @@ import java.util.List;
 public class MecanumDriveSubsystem extends SubsystemBase {
     static DriveConstants RobotConstants;
 
-    static StandardTrackingWheelLocalizer localizer;
-
     static Telemetry telemetry;
 
-    public MecanumDriveSubsystem(HardwareMap hardwareMap, Telemetry telemetry, RobotEx.OpModeType type, DriveConstants robotConstants, Pose2d startingPose) {
+    public MecanumDriveSubsystem(HardwareMap hardwareMap, Telemetry telemetry, RobotEx.OpModeType type, DriveConstants robotConstants) {
         this.RobotConstants = robotConstants;
         this.telemetry = telemetry;
 
-        localizer = new StandardTrackingWheelLocalizer(hardwareMap, new ArrayList<Integer>(), new ArrayList<Integer>());
-        localizer.setPoseEstimate(startingPose);
-
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        frontLeft = new MotorExEx(hardwareMap, "frontLeft", Motor.GoBILDA.RPM_312);
-        frontRight = new MotorExEx(hardwareMap, "frontRight", Motor.GoBILDA.RPM_312);
-        rearRight = new MotorExEx(hardwareMap, "rearRight", Motor.GoBILDA.RPM_312);
-        rearLeft = new MotorExEx(hardwareMap, "rearLeft", Motor.GoBILDA.RPM_312);
+        frontLeft = new MotorExEx(hardwareMap, "frontLeft", Motor.GoBILDA.RPM_1150);
+        frontRight = new MotorExEx(hardwareMap, "frontRight", Motor.GoBILDA.RPM_1150);
+        rearRight = new MotorExEx(hardwareMap, "rearRight", Motor.GoBILDA.RPM_1150);
+        rearLeft = new MotorExEx(hardwareMap, "rearLeft", Motor.GoBILDA.RPM_1150);
 
         motors = Arrays.asList(frontLeft, frontRight, rearLeft, rearRight);
 
@@ -94,18 +87,9 @@ public class MecanumDriveSubsystem extends SubsystemBase {
             );
         }
     }
-
-    @Override
-    public void periodic() {
-        localizer.update();
-        telemetry.addData("X: ", localizer.getPoseEstimate().getX());
-        telemetry.addData("Y: ", localizer.getPoseEstimate().getY());
-//        telemetry.addData("Heading (Pose): ", Math.toDegrees(localizer.getPoseEstimate().getHeading()));
-    }
   
     /* ----------------------------------------- TELEOP ----------------------------------------- */
     private MotorExEx frontLeft, frontRight, rearRight, rearLeft;
-    private IMU imu;
     private List<MotorExEx> motors;
     private VoltageSensor batteryVoltageSensor;
     protected String m_name = this.getClass().getSimpleName();
