@@ -36,8 +36,7 @@ public class RevIMU implements HardwareDevice {
     double offset;
 
     private int multiplier;
-    private double pitchOffset = 0,
-            rollOffset = 0;
+    private double yawOffset = 0, pitchOffset = 0, rollOffset = 0;
 
     /**
      * Create a new object for the built-in gyro/imu in the Rev Expansion Hub
@@ -62,7 +61,7 @@ public class RevIMU implements HardwareDevice {
     /**
      * Initializes gyro with default parameters.
      */
-    public void init() {
+    public void init(double initYaw) {
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
@@ -70,24 +69,21 @@ public class RevIMU implements HardwareDevice {
 
         IMU.Parameters parameters = new IMU.Parameters(orientationOnRobot);
 
-//        parameters.angleUnit = IMU.AngleUnit.DEGREES;
-//        parameters.accelUnit = IMU.AccelUnit.METERS_PERSEC_PERSEC;
-//        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-//        parameters.loggingEnabled = true;
-//        parameters.loggingTag = "IMU";
-//        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-        init(parameters);
+        init(parameters, initYaw);
     }
 
     /**
      * Initializes gyro with custom parameters.
      */
-    public void init(IMU.Parameters parameters) {
+    public void init(IMU.Parameters parameters, double initYaw) {
         revIMU.initialize(parameters);
-        revIMU.resetYaw();
+
+        yawOffset += initYaw;
+
+        resetYaw();
         resetPitch();
         resetRoll();
+
         globalHeading = 0;
         relativeHeading = 0;
         offset = 0;
@@ -103,23 +99,9 @@ public class RevIMU implements HardwareDevice {
     /**
      * @return Absolute heading of the robot
      */
-//    @Override
-//    public double getYaw() {
-//        return revIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) * multiplier;
-//    }
-//
-//    @Override
-//    public double getPitch() {
-//        return revIMU.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES) * multiplier;
-//    }
-//
-//    @Override
-//    public double getRoll() {
-//        return revIMU.getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES) * multiplier;
-//    }
 
     public void resetYaw() {
-        revIMU.resetYaw();
+        yawOffset = revIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
 
     public void resetPitch() {
@@ -136,8 +118,11 @@ public class RevIMU implements HardwareDevice {
     public double[] getYawPitchRoll() {
         // make a singular hardware call
         YawPitchRollAngles ypr_angles = revIMU.getRobotYawPitchRollAngles();
-        return new double[]{ypr_angles.getYaw(AngleUnit.DEGREES),
-                ypr_angles.getPitch(AngleUnit.DEGREES) - pitchOffset, ypr_angles.getRoll(AngleUnit.DEGREES) - rollOffset};
+        return new double[]{
+                ypr_angles.getYaw(AngleUnit.DEGREES) - yawOffset,
+                ypr_angles.getPitch(AngleUnit.DEGREES) - pitchOffset,
+                ypr_angles.getRoll(AngleUnit.DEGREES) - rollOffset
+        };
     }
 
     public double[] getXYZGs() {

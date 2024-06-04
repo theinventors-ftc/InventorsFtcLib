@@ -110,7 +110,8 @@ public class RobotEx {
         drive = new MecanumDriveSubsystem(hardwareMap, telemetry, type, RobotConstants, startingPose);
 
         //////////////////////////////////////////// IMU ///////////////////////////////////////////
-        gyro = new IMUSubsystem(hardwareMap, telemetry, "external_imu");
+        gyro = new IMUSubsystem(hardwareMap, telemetry, "external_imu",
+                Math.toDegrees(startingPose.getHeading()));
 
         CommandScheduler.getInstance().registerSubsystem(gyro);
     }
