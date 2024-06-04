@@ -19,8 +19,8 @@ public class IMUSubsystem extends SubsystemBase {
 
     private Telemetry telemetry;
 
-    public IMUSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
-        imu = new RevIMU(hardwareMap);
+    public IMUSubsystem(HardwareMap hardwareMap, Telemetry telemetry, String id) {
+        imu = new RevIMU(hardwareMap, id);
         imu.init();
         timer = new Timer(0);
         timer.start();

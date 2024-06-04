@@ -29,7 +29,9 @@ import org.inventors.ftc.robotbase.hardware.Camera;
 import org.inventors.ftc.robotbase.hardware.DistanceSensorEx;
 import org.inventors.ftc.robotbase.hardware.GamepadExEx;
 import org.inventors.ftc.robotbase.hardware.IMUEmmulatedSubsystem;
+import org.inventors.ftc.robotbase.hardware.IMUSubsystem;
 import org.inventors.ftc.robotbase.hardware.MotorExEx;
+import org.opencv.core.Rect;
 
 import java.util.ArrayList;
 
@@ -45,6 +47,8 @@ public class RobotEx {
     }
 
     protected OpModeType opModeType;
+    protected Alliance alliance;
+
     protected FtcDashboard dashboard;
 
     protected GamepadExEx driverOp;
@@ -62,23 +66,19 @@ public class RobotEx {
     protected final Boolean initCamera;
     protected final Boolean initDistance;
 
-    protected IMUEmmulatedSubsystem gyro;
+    protected IMUSubsystem gyro;
     protected DistanceSensorEx distanceSensor;
 
     protected Telemetry telemetry, dashTelemetry;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public RobotEx(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
-                   GamepadExEx toolOp) {
-        this(hardwareMap, RobotConstants, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, false, new Pose2d(0, 0, 0));
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public RobotEx(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, GamepadExEx driverOp,
-                   GamepadExEx toolOp, OpModeType type, Boolean initCamera, Boolean initDistance, Pose2d startingPose
+    public RobotEx(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry,
+                   GamepadExEx driverOp, GamepadExEx toolOp, OpModeType type, Alliance alliance,
+                   String imu_id, Boolean initCamera, Boolean initDistance, Pose2d startingPose
     ) {
         this.initCamera = initCamera;
         this.initDistance = initDistance;
+        this.alliance = alliance;
 
         initCommon(hardwareMap, RobotConstants, telemetry, type, startingPose);
 
@@ -94,7 +94,13 @@ public class RobotEx {
     public void initCommon(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, OpModeType type, Pose2d startingPose) {
         ////////////////////////////////////////// Camera //////////////////////////////////////////
         this.dashboard = FtcDashboard.getInstance();
-        if (this.initCamera) camera = new Camera(hardwareMap, dashboard, telemetry, TeamPropDetectionPipeline.Alliance.RED);
+        if (this.initCamera) {
+            TeamPropDetectionPipeline.Alliance camera_alliance = alliance == Alliance.RED ?
+                    TeamPropDetectionPipeline.Alliance.RED : TeamPropDetectionPipeline.Alliance.BLUE;
+            camera = new Camera(hardwareMap, dashboard, telemetry, camera_alliance, 40,
+                    new Rect(0, 0, 0, 0), new Rect(0, 0, 0, 0),
+                    new Rect(0, 0, 0, 0));
+        }
 
         //////////////////////////////////////// Telemetries ///////////////////////////////////////
         this.telemetry = telemetry;
@@ -104,7 +110,7 @@ public class RobotEx {
         drive = new MecanumDriveSubsystem(hardwareMap, telemetry, type, RobotConstants, startingPose);
 
         //////////////////////////////////////////// IMU ///////////////////////////////////////////
-        gyro = new IMUEmmulatedSubsystem(telemetry, getMotors()[0], getMotors()[3], startingPose.getHeading());
+        gyro = new IMUSubsystem(hardwareMap, telemetry, "external_imu");
 
         CommandScheduler.getInstance().registerSubsystem(gyro);
     }
