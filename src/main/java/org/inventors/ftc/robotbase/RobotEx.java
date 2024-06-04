@@ -80,7 +80,7 @@ public class RobotEx {
         this.initDistance = initDistance;
         this.alliance = alliance;
 
-        initCommon(hardwareMap, RobotConstants, telemetry, type, startingPose);
+        initCommon(hardwareMap, RobotConstants, telemetry, type, imu_id, startingPose);
 
         if (type == OpModeType.TELEOP) {
             initTele(hardwareMap, driverOp, toolOp);
@@ -91,7 +91,9 @@ public class RobotEx {
         }
     }
 
-    public void initCommon(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry, OpModeType type, Pose2d startingPose) {
+    public void initCommon(HardwareMap hardwareMap, DriveConstants RobotConstants,
+                           Telemetry telemetry, OpModeType type, String imuId,
+                           Pose2d startingPose) {
         ////////////////////////////////////////// Camera //////////////////////////////////////////
         this.dashboard = FtcDashboard.getInstance();
         if (this.initCamera) {
@@ -110,7 +112,7 @@ public class RobotEx {
         drive = new MecanumDriveSubsystem(hardwareMap, telemetry, type, RobotConstants, startingPose);
 
         //////////////////////////////////////////// IMU ///////////////////////////////////////////
-        gyro = new IMUSubsystem(hardwareMap, telemetry, "external_imu",
+        gyro = new IMUSubsystem(hardwareMap, telemetry, imuId,
                 Math.toDegrees(startingPose.getHeading()));
 
         CommandScheduler.getInstance().registerSubsystem(gyro);
