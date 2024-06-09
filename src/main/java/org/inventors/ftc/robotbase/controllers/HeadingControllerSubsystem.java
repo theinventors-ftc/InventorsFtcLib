@@ -42,7 +42,7 @@ public class HeadingControllerSubsystem extends SubsystemBase {
                                       IntSupplier closestOrientationTarget,
                                       Telemetry telemetry) {
 //        kP = 0.06;
-        kP = 0.02;
+        kP = 0.022;
         controller = new PIDFControllerEx(kP, kI, kD, 0, 0, 1, 0, 0);
         this.gyro_filter = new IIRSubsystem(0, gyroValue);
         this.gyroValue = () -> gyro_filter.get();

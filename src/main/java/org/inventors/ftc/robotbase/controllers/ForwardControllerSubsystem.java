@@ -21,9 +21,10 @@ public class ForwardControllerSubsystem extends SubsystemBase {
 
     private boolean enabled = false;
 
-    private final double kP = 0.004;
+    private final double kP = 0.08;
     private final double kI = 0;
-    private final double kD = 0.00006;
+    private final double kD = 0.02;
+    private double pidf_out;
 
     PIDFControllerEx controller;
 
@@ -33,10 +34,10 @@ public class ForwardControllerSubsystem extends SubsystemBase {
 
     public ForwardControllerSubsystem(DoubleSupplier distValue, double target,
                                       Telemetry telemetry) {
-        controller = new PIDFControllerEx(kP, kI, kD, 0, 0, 0, 0.7, 0.05, 0, 0);
+        controller = new PIDFControllerEx(kP, kI, kD, 0, 0, 0, 0.2, 1.3, 0, 0);
         controller.setSetPoint(target);
         this.distValue = distValue;
-        this.distance_filter = new IIRSubsystem(0.2, () -> distance);
+//        this.distance_filter = new IIRSubsystem(0.2, distValue);
         this.target = target;
         this.telemetry = telemetry;
     }
@@ -44,22 +45,20 @@ public class ForwardControllerSubsystem extends SubsystemBase {
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void periodic() {
+//        distance = distValue.getAsDouble();
         telemetry.addData("Distance: ", distance);
-        telemetry.addData("Distance_Filt: ", distance_filter.get());
+//        telemetry.addData("Distance_Filt: ", distance_filter.get());
     }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     public double calculateOutput() {
         distance = distValue.getAsDouble();
-        return controller.calculate(distance_filter.get());
+        pidf_out = controller.calculate(distance);
+        return Math.signum(pidf_out)*pidf_out*pidf_out/2;
     }
-
 
     public boolean isEnabled() {
         return enabled;
-    }
-
-    public void setGyroTarget(double target) {
-        controller.setSetPoint(target);
     }
 
     public double getTarget() {

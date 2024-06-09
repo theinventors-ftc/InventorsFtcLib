@@ -11,7 +11,7 @@ import java.util.function.DoubleSupplier;
 public class IIRSubsystem extends SubsystemBase {
     DoubleSupplier value;
     double smoothing_constant;
-    double smoothed_value;
+    double smoothed_value, raw_value;
 
     public IIRSubsystem(double smoothing_constant, DoubleSupplier value){
         this.value = value;
@@ -21,6 +21,7 @@ public class IIRSubsystem extends SubsystemBase {
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void periodic() {
+        raw_value = value.getAsDouble();
         smoothed_value = (1-smoothing_constant) * value.getAsDouble() + smoothing_constant * smoothed_value;
     }
 
@@ -34,5 +35,9 @@ public class IIRSubsystem extends SubsystemBase {
 
     public double get() {
         return smoothed_value;
+    }
+
+    public double get_raw() {
+        return raw_value;
     }
 }

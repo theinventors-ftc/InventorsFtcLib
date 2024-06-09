@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -171,9 +172,9 @@ public class RobotEx {
         driverOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
                 .whenPressed(new InstantCommand(drive::setRobotCentric, drive));
 
-        if (this.initDistance) {
+        if (initDistance) {
             distanceSensor = new DistanceSensorEx(hardwareMap, "distance_sensor");
-            distanceFollow = new ForwardControllerSubsystem(() -> distanceSensor.getDistance(DistanceUnit.MM), 250, telemetry);
+            distanceFollow = new ForwardControllerSubsystem(() -> distanceSensor.getDistance(DistanceUnit.CM), 5, telemetry);
 
             // Backdrop Aligment
             driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
@@ -182,7 +183,7 @@ public class RobotEx {
                                     new SequentialCommandGroup(
                                             new InstantCommand(drive::setRobotCentric),
                                             new InstantCommand(gyroFollow::enable, gyroFollow),
-                                            new InstantCommand(() -> gyroFollow.setGyroTarget(90), gyroFollow)
+                                            new InstantCommand(() -> gyroFollow.setGyroTarget(alliance == Alliance.RED ? 90 : -90), gyroFollow)
                                     ),
                                     new InstantCommand(distanceFollow::enable, distanceFollow)
                             )
@@ -211,34 +212,23 @@ public class RobotEx {
     }
 
     public double drivetrainStrafe() {
-        double factor = distanceFollow.isEnabled() ? 0.3 : 1; // This lowers the max power in backdrop alignment for accuracy
+        // This lowers the max power in backdrop alignment for accuracy
+        double factor = distanceFollow.isEnabled() ? 0.7 : 1;
         return driverOp.getLeftX() * factor;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public double drivetrainForward() {
-        double forwardPower;
+        if (distanceFollow.isEnabled()) return distanceFollow.calculateOutput();
 
-        if (distanceFollow.isEnabled()) {
-            forwardPower = distanceFollow.calculateOutput();
-        } else {
-            forwardPower = driverOp.getLeftY();
-        }
-
-        return forwardPower;
+        return driverOp.getLeftY();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public double drivetrainTurn() {
-        double turnPower;
+        if (gyroFollow.isEnabled()) return -gyroFollow.calculateTurn();
 
-        if (gyroFollow.isEnabled()) {
-            turnPower = -gyroFollow.calculateTurn();
-        } else {
-            turnPower = driverOp.getRightX();
-        }
-
-        return turnPower;
+        return driverOp.getRightX();
     }
 
     public MotorExEx[] getMotors() {
