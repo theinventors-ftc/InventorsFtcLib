@@ -43,7 +43,7 @@ public class HeadingControllerSubsystem extends SubsystemBase {
                                       Telemetry telemetry) {
 //        kP = 0.06;
         kP = 0.022;
-        controller = new PIDFControllerEx(kP, kI, kD, 0, 0, 1, 0, 0);
+        controller = new PIDFControllerEx(kP, kI, kD, 0, 0.2, 1.5, 0, 0);
         this.gyro_filter = new IIRSubsystem(0, gyroValue);
         this.gyroValue = () -> gyro_filter.get();
         this.closestOrientationTarget = closestOrientationTarget;
@@ -68,8 +68,6 @@ public class HeadingControllerSubsystem extends SubsystemBase {
         double curValue;
         if (fType == Type.CAMERA) {
             curValue = getCameraObject_x.getAsDouble();
-//            curValue = camera.getPipeline().getElementsAnalogCoordinates()[0];
-//            curValue = 0;
         } else {
             if (findClosestTarget) {
                 target = closestOrientationTarget.getAsInt();

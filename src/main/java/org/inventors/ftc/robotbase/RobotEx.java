@@ -174,7 +174,7 @@ public class RobotEx {
 
         if (initDistance) {
             distanceSensor = new DistanceSensorEx(hardwareMap, "distance_sensor");
-            distanceFollow = new ForwardControllerSubsystem(() -> distanceSensor.getDistance(DistanceUnit.CM), 5, telemetry);
+            distanceFollow = new ForwardControllerSubsystem(() -> distanceSensor.getDistance(DistanceUnit.CM), 4, telemetry);
 
             // Backdrop Aligment
             driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)

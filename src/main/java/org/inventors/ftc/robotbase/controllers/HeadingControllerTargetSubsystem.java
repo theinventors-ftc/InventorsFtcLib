@@ -29,21 +29,6 @@ public class HeadingControllerTargetSubsystem extends SubsystemBase {
         this.telemetry = telemetry;
     }
 
-//    public static int findClosestAngle(int[] targets, int curAngle) {
-//        int closestElement = targets[0];
-//        int minDifference = Math.abs(curAngle - closestElement);
-//
-//        for (int i = 1; i < targets.length; i++) {
-//            int currentDifference = Math.abs(curAngle - targets[i]);
-//            if (currentDifference < minDifference) {
-//                minDifference = currentDifference;
-//                closestElement = targets[i];
-//            }
-//        }
-//
-//        return closestElement;
-//    }
-
     public static int findClosestAngle(double curAngle) {
         int minDistIdx;
         int maxIdx = (int) Math.ceil(curAngle / 45);
@@ -60,10 +45,6 @@ public class HeadingControllerTargetSubsystem extends SubsystemBase {
     public void periodic() {
         vectorAngle = Math.toDegrees(Math.atan2(-stick_x.getAsDouble(), -stick_y.getAsDouble()));
         vectorMagnitude = Math.sqrt(Math.pow(stick_x.getAsDouble(), 2) + Math.pow(stick_y.getAsDouble(), 2));
-
-        telemetry.addData("Angle: ", vectorAngle);
-        telemetry.addData("Magnituqde: ", vectorMagnitude);
-        telemetry.addData("Target Angle: ", getAngle());
     }
     public double getAngle() {
         return findClosestAngle(vectorAngle);
