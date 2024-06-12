@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -151,33 +152,41 @@ public class RobotEx {
 
         gyroFollow = new HeadingControllerSubsystem(gyro::getYaw,
                 gyro::findClosestOrientationTarget, telemetry);
-//        new Trigger(() -> driverOp.getRightY() >= 0.8).whenActive(
-//                new InstantCommand(() -> gyroFollow.setGyroTarget(180), gyroFollow));
-//        new Trigger(() -> driverOp.getRightY() <= -0.8).whenActive(
-//                new InstantCommand(() -> gyroFollow.setGyroTarget(0), gyroFollow));
-//        new Trigger(() -> driverOp.getRightX() >= 0.8).whenActive(
-//                new InstantCommand(() -> gyroFollow.setGyroTarget(-90), gyroFollow));
-//        new Trigger(() -> driverOp.getRightX() <= -0.8).whenActive(
-//                new InstantCommand(() -> gyroFollow.setGyroTarget(90), gyroFollow));
 
-        new Trigger(() -> gyroTargetSubsystem.getMagnitude() >= 0.7 && gyroFollow.isEnabled() && !distanceFollow.isEnabled()).whileActiveContinuous(
-                new InstantCommand(() -> gyroFollow.setGyroTarget(gyroTargetSubsystem.getAngle()), gyroFollow));
+//        new Trigger(() -> gyroTargetSubsystem.getMagnitude() >= 0.7 && gyroFollow.isEnabled() && !distanceFollow.isEnabled()).whileActiveContinuous(
+//                new InstantCommand(() -> gyroFollow.setGyroTarget(gyroTargetSubsystem.getAngle()), gyroFollow));
 
-        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new InstantCommand(gyroFollow::toggleState, gyroFollow));
+//        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+//                .whenPressed(new InstantCommand(gyroFollow::toggleState, gyroFollow));
 
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
-                .whenPressed(new InstantCommand(drive::setFieldCentric, drive));
+                .whenPressed(new SequentialCommandGroup(
+                            new InstantCommand(gyroFollow::enable, gyroFollow),
+                            new InstantCommand(() -> gyroFollow.setGyroTarget(-90), gyroFollow)
+                ));
+
 
         driverOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
-                .whenPressed(new InstantCommand(drive::setRobotCentric, drive));
+                .whenPressed(new SequentialCommandGroup(
+                        new InstantCommand(gyroFollow::enable, gyroFollow),
+                        new InstantCommand(() -> gyroFollow.setGyroTarget(90), gyroFollow)
+                ));
+
+        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new InstantCommand(gyroFollow::disable, gyroFollow));
+
+//        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
+//                .whenPressed(new InstantCommand(drive::setFieldCentric, drive));
+//
+//        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
+//                .whenPressed(new InstantCommand(drive::setRobotCentric, drive));
 
         if (initDistance) {
             distanceSensor = new DistanceSensorEx(hardwareMap, "distance_sensor");
-            distanceFollow = new ForwardControllerSubsystem(() -> distanceSensor.getDistance(DistanceUnit.CM), 4, telemetry);
+            distanceFollow = new ForwardControllerSubsystem(() -> distanceSensor.getDistance(DistanceUnit.CM), 3, telemetry);
 
             // Backdrop Aligment
-            driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+            driverOp.getGamepadButton(GamepadKeys.Button.A)
                     .whenPressed(
                             new ParallelCommandGroup(
                                     new SequentialCommandGroup(
@@ -189,7 +198,7 @@ public class RobotEx {
                             )
                     );
 
-            driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+            driverOp.getGamepadButton(GamepadKeys.Button.A)
                     .whenReleased(
                             new ParallelCommandGroup(
                                     new InstantCommand(drive::setFieldCentric),
