@@ -9,18 +9,12 @@ import androidx.annotation.RequiresApi;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.inventors.ftc.opencvpipelines.TeamPropDetectionPipeline;
-import org.inventors.ftc.robotbase.controllers.ForwardControllerSubsystem;
 import org.inventors.ftc.robotbase.controllers.HeadingControllerSubsystem;
 import org.inventors.ftc.robotbase.controllers.HeadingControllerTargetSubsystem;
 import org.inventors.ftc.robotbase.drive.DriveConstants;
@@ -29,13 +23,9 @@ import org.inventors.ftc.robotbase.drive.MecanumDriveSubsystem;
 import org.inventors.ftc.robotbase.hardware.Camera;
 import org.inventors.ftc.robotbase.hardware.DistanceSensorEx;
 import org.inventors.ftc.robotbase.hardware.GamepadExEx;
-import org.inventors.ftc.robotbase.hardware.IMUEmmulatedSubsystem;
 import org.inventors.ftc.robotbase.hardware.IMUSubsystem;
 import org.inventors.ftc.robotbase.hardware.MotorExEx;
 import org.opencv.core.Rect;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class RobotEx {
     // enum to specify opmode type
@@ -61,7 +51,6 @@ public class RobotEx {
 
     public Camera camera;
 
-    protected ForwardControllerSubsystem distanceFollow;
     protected HeadingControllerSubsystem gyroFollow;
     protected HeadingControllerSubsystem cameraFollow;
     protected HeadingControllerTargetSubsystem gyroTargetSubsystem;
@@ -181,33 +170,6 @@ public class RobotEx {
 //        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
 //                .whenPressed(new InstantCommand(drive::setRobotCentric, drive));
 
-        if (initDistance) {
-            distanceSensor = new DistanceSensorEx(hardwareMap, "distance_sensor");
-            distanceFollow = new ForwardControllerSubsystem(() -> distanceSensor.getDistance(DistanceUnit.CM), 3, telemetry);
-
-            // Backdrop Aligment
-            driverOp.getGamepadButton(GamepadKeys.Button.A)
-                    .whenPressed(
-                            new ParallelCommandGroup(
-                                    new SequentialCommandGroup(
-                                            new InstantCommand(drive::setRobotCentric),
-                                            new InstantCommand(gyroFollow::enable, gyroFollow),
-                                            new InstantCommand(() -> gyroFollow.setGyroTarget(alliance == Alliance.RED ? 90 : -90), gyroFollow)
-                                    ),
-                                    new InstantCommand(distanceFollow::enable, distanceFollow)
-                            )
-                    );
-
-            driverOp.getGamepadButton(GamepadKeys.Button.A)
-                    .whenReleased(
-                            new ParallelCommandGroup(
-                                    new InstantCommand(drive::setFieldCentric),
-                                    new InstantCommand(gyroFollow::disable, gyroFollow),
-                                    new InstantCommand(distanceFollow::disable, distanceFollow)
-                            )
-                    );
-        }
-
         ////////////////////////// Setup and Initialize Mechanisms Objects /////////////////////////
         initMechanismsTeleOp(hardwareMap);
     }
@@ -222,14 +184,11 @@ public class RobotEx {
 
     public double drivetrainStrafe() {
         // This lowers the max power in backdrop alignment for accuracy
-        double factor = distanceFollow.isEnabled() ? 0.7 : 1;
-        return driverOp.getLeftX() * factor;
+        return driverOp.getLeftX();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public double drivetrainForward() {
-        if (distanceFollow.isEnabled()) return distanceFollow.calculateOutput();
-
         return driverOp.getLeftY();
     }
 
