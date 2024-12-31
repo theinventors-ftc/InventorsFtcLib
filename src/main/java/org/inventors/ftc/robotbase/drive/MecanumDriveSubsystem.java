@@ -3,7 +3,6 @@ package org.inventors.ftc.robotbase.drive;
 import static org.inventors.ftc.robotbase.RobotEx.OpModeType.TELEOP;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -14,12 +13,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.inventors.ftc.robotbase.hardware.MotorExEx;
 import org.inventors.ftc.robotbase.RobotEx;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-/*
- * Simple mecanum drive hardware implementation for REV hardware.
- */
+
 @Config
 public class MecanumDriveSubsystem extends SubsystemBase {
     static DriveConstants RobotConstants;
@@ -32,10 +28,10 @@ public class MecanumDriveSubsystem extends SubsystemBase {
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        frontLeft = new MotorExEx(hardwareMap, "frontLeft", Motor.GoBILDA.RPM_1150);
-        frontRight = new MotorExEx(hardwareMap, "frontRight", Motor.GoBILDA.RPM_1150);
-        rearRight = new MotorExEx(hardwareMap, "rearRight", Motor.GoBILDA.RPM_1150);
-        rearLeft = new MotorExEx(hardwareMap, "rearLeft", Motor.GoBILDA.RPM_1150);
+        frontLeft = new MotorExEx(hardwareMap, "frontLeft", Motor.GoBILDA.RPM_435);
+        frontRight = new MotorExEx(hardwareMap, "frontRight", Motor.GoBILDA.RPM_435);
+        rearLeft = new MotorExEx(hardwareMap, "rearLeft", Motor.GoBILDA.RPM_435);
+        rearRight = new MotorExEx(hardwareMap, "rearRight", Motor.GoBILDA.RPM_435);
 
         motors = Arrays.asList(frontLeft, frontRight, rearLeft, rearRight);
 

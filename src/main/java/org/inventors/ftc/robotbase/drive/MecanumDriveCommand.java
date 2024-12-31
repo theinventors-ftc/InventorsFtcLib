@@ -1,9 +1,5 @@
 package org.inventors.ftc.robotbase.drive;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -33,7 +29,6 @@ public class MecanumDriveCommand extends CommandBase {
         addRequirements(this.drivetrain);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void execute() {
         drivetrain.drive(strafeSpeed.getAsDouble(), forwardSpeed.getAsDouble(),
