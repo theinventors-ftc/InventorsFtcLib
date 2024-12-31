@@ -13,7 +13,7 @@ public class DistanceSensorEx {
     }
 
     public double getDistance() {
-        return sensor.getDistance(DistanceUnit.MM);
+        return sensor.getDistance(DistanceUnit.CM);
     }
 
     public double getDistance(DistanceUnit unit) {

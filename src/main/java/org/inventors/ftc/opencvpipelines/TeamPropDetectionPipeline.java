@@ -44,9 +44,11 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
     Mat centerROI = new Mat();
     Mat rightROI = new Mat();
 
-    Rect leftRect = new Rect(40, 420, 400, 290);
-    Rect centerRect = new Rect(520, 350, 320, 319);
-    Rect rightRect = new Rect(900, 310, 300, 400);
+//    Rect leftRect = new Rect(40, 420, 400, 290);
+//    Rect centerRect = new Rect(520, 350, 320, 319);
+//    Rect rightRect = new Rect(900, 310, 300, 400);
+
+    Rect leftRect, centerRect, rightRect;
 
     double leftMean = 0.0, centerMean = 0.0, rightMean = 0.0;
 
@@ -55,25 +57,14 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
     double blurAmount = 0.0;
 
     public TeamPropDetectionPipeline(Telemetry telemetry, Alliance allianceType, double threshhold,
-                                     double blurAmount) {
+                                     double blurAmount, Rect leftRect, Rect centerRect, Rect rightRect) {
         this.telemetry = telemetry;
         this.allianceType = allianceType;
         this.threshold = threshhold;
         this.blurAmount = blurAmount;
-    }
-
-    public TeamPropDetectionPipeline(Telemetry telemetry, Alliance allianceType, double threshhold) {
-        this.telemetry = telemetry;
-        this.allianceType = allianceType;
-        this.threshold = threshhold;
-        this.blurAmount = 6;
-    }
-
-    public TeamPropDetectionPipeline(Telemetry telemetry, Alliance allianceType) {
-        this.telemetry = telemetry;
-        this.allianceType = allianceType;
-        this.threshold = 60;
-        this.blurAmount = 6;
+        this.leftRect = leftRect;
+        this.centerRect = centerRect;
+        this.rightRect = rightRect;
     }
 
     @Override

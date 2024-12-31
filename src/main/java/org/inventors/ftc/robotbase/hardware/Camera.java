@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.inventors.ftc.opencvpipelines.AprilTagDetectionPipeline;
 import org.inventors.ftc.opencvpipelines.TeamPropDetectionPipeline;
+import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -14,12 +15,13 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public class Camera {
     private final OpenCvWebcam webcam;
-//    protected AprilTagDetectionPipeline april_tag_pipeline;
     protected TeamPropDetectionPipeline teamPropDetectionPipeline;
 
     private Telemetry telemetry;
 
-    public Camera(HardwareMap hardwareMap, FtcDashboard dashboard, Telemetry telemetry, TeamPropDetectionPipeline.Alliance alliance) {
+    public Camera(HardwareMap hardwareMap, FtcDashboard dashboard, Telemetry telemetry,
+                  TeamPropDetectionPipeline.Alliance alliance, double thresh, Rect leftRect,
+                  Rect centerRect, Rect rightRect) {
         this.telemetry = telemetry;
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources()
@@ -29,8 +31,9 @@ public class Camera {
 
         dashboard.startCameraStream(webcam, 0);
 
-//        april_tag_pipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-        teamPropDetectionPipeline = new TeamPropDetectionPipeline(telemetry, alliance, 30, 5);
+        teamPropDetectionPipeline = new TeamPropDetectionPipeline(telemetry, alliance, thresh,
+                5, leftRect, centerRect, rightRect);
+
         webcam.setPipeline(teamPropDetectionPipeline);
 
         // Timeout for obtaining permission is configurable. Set before opening.
