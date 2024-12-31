@@ -4,14 +4,11 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.inventors.ftc.opencvpipelines.AprilTagDetectionPipeline;
 import org.inventors.ftc.opencvpipelines.TeamPropDetectionPipeline;
-import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
-
 
 public class Camera {
     private final OpenCvWebcam webcam;
@@ -19,9 +16,7 @@ public class Camera {
 
     private Telemetry telemetry;
 
-    public Camera(HardwareMap hardwareMap, FtcDashboard dashboard, Telemetry telemetry,
-                  TeamPropDetectionPipeline.Alliance alliance, double thresh, Rect leftRect,
-                  Rect centerRect, Rect rightRect) {
+    public Camera(HardwareMap hardwareMap, FtcDashboard dashboard, Telemetry telemetry) {
         this.telemetry = telemetry;
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources()
@@ -30,9 +25,6 @@ public class Camera {
                 "webcam"), cameraMonitorViewId);
 
         dashboard.startCameraStream(webcam, 0);
-
-        teamPropDetectionPipeline = new TeamPropDetectionPipeline(telemetry, alliance, thresh,
-                5, leftRect, centerRect, rightRect);
 
         webcam.setPipeline(teamPropDetectionPipeline);
 
@@ -51,9 +43,5 @@ public class Camera {
                  */
             }
         });
-    }
-
-    public int getTeamPropPos() {
-        return teamPropDetectionPipeline.getPropPosition();
     }
 }
