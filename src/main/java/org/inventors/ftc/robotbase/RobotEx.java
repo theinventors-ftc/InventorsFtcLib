@@ -26,8 +26,6 @@ public class RobotEx {
         BLUE
     }
 
-    protected RobotMapInterface robotMap;
-
     protected OpModeType opModeType;
     protected Alliance alliance;
 
@@ -48,56 +46,55 @@ public class RobotEx {
     protected IMUSubsystem gyro;
 
     protected Telemetry telemetry;
-    public RobotEx(RobotMapInterface robotMap, DriveConstants RobotConstants,
+    public RobotEx(RobotMapInterface robotMapUtil, DriveConstants RobotConstants,
                    OpModeType type, Alliance alliance, Boolean initCamera, Pose2d startingPose
     ) {
-        this.robotMap = robotMap;
         this.initCamera = initCamera;
         this.alliance = alliance;
 
-        initCommon(robotMap, RobotConstants, type, startingPose);
+        initCommon(robotMapUtil, RobotConstants, type, startingPose);
 
         if (type == OpModeType.TELEOP) {
-            initTele(robotMap);
+            initTele(robotMapUtil);
             opModeType = OpModeType.TELEOP;
         } else {
-            initAuto(robotMap);
+            initAuto(robotMapUtil);
             opModeType = OpModeType.AUTO;
         }
     }
 
-    public void initCommon(RobotMapInterface robotMap, DriveConstants RobotConstants,
+    public void initCommon(RobotMapInterface robotMapUtil, DriveConstants RobotConstants,
                            OpModeType type, Pose2d startingPose) {
         // --------------------------------------- Camera --------------------------------------- //
         this.dashboard = FtcDashboard.getInstance();
         if (this.initCamera) {
-            camera = new Camera(robotMap, dashboard);
+            camera = new Camera(robotMapUtil, dashboard);
         }
 
         // ------------------------------------- Telemetries ------------------------------------ //
-        this.telemetry = robotMap.getTelemetry();
+        this.telemetry = robotMapUtil.getTelemetry();
 
         // ---------------------------------------- Drive --------------------------------------- //
-        drive = new MecanumDriveSubsystem(robotMap, RobotConstants);
+        drive = new MecanumDriveSubsystem(robotMapUtil, RobotConstants);
 
         // ----------------------------------------- IMU ---------------------------------------- //
-        gyro = new IMUSubsystem(robotMap, Math.toDegrees(startingPose.getHeading()));
+        gyro = new IMUSubsystem(robotMapUtil, Math.toDegrees(startingPose.getHeading()));
 
         CommandScheduler.getInstance().registerSubsystem(gyro);
     }
 
-    public void initAuto(RobotMapInterface robotMap) {
+    public void initAuto(RobotMapInterface robotMapUtil) {
         // ------------------------------------- Drivetrain ------------------------------------- //
         // TODO: Only if we use RoadRunner in TeleOP
 
         // ----------------------- Setup and Initialize Mechanisms Objects ---------------------- //
-        initMechanismsAutonomous(robotMap);
+        initMechanismsAutonomous();
     }
 
-    public void initTele(RobotMapInterface robotMap) {
+    public void initTele(RobotMapInterface robotMapUtil) {
         // -------------------------------------- Gamepads -------------------------------------- //
-        this.driverOp = robotMap.getDriverOp();
-        this.toolOp = robotMap.getToolOp();
+        this.driverOp = robotMapUtil.getDriverOp();
+        this.toolOp = robotMapUtil.getToolOp();
 
         // ------------------------------------- Drivetrain ------------------------------------- //
         driveCommand = new MecanumDriveCommand(drive, this::drivetrainForward,
@@ -140,7 +137,7 @@ public class RobotEx {
                 .whenPressed(new InstantCommand(drive::setRobotCentric, drive));
 
         // ----------------------- Setup and Initialize Mechanisms Objects ---------------------- //
-        initMechanismsTeleOp(robotMap);
+        initMechanismsTeleOp();
     }
 
     // ------------------------------------- Drive Commands ------------------------------------- //
@@ -159,11 +156,11 @@ public class RobotEx {
     }
 
     // -------------------------------- Mechanisms Initialization ------------------------------- //
-    public void initMechanismsAutonomous(RobotMapInterface robotMap) {
+    public void initMechanismsAutonomous() {
         // should be overridden by child class
     }
 
-    public void initMechanismsTeleOp(RobotMapInterface robotMap) {
+    public void initMechanismsTeleOp() {
         // should be overridden by child class
     }
 
