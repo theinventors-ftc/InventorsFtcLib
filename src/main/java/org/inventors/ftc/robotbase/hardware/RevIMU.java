@@ -45,19 +45,10 @@ public class RevIMU implements HardwareDevice {
      * @param robotMap      Robot map
      * @param imuName Name of sensor in configuration
      */
-    public RevIMU(RobotMapInterface robotMap, String imuName) {
+    public RevIMU(RobotMapInterface robotMap) {
 //        revIMU = hw.get(IMU.class, imuName);
         revIMU = robotMap.getIMU();
         multiplier = 1;
-    }
-
-    /**
-     * Create a new object for the built-in gyro/imu in the Rev Expansion Hub with the default configuration name of "imu"
-     *
-     * @param robotMap Robot map
-     */
-    public RevIMU(RobotMapInterface robotMap) {
-        this(robotMap, "imu");
     }
 
     /**
