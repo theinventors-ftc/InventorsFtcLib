@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.inventors.ftc.robotbase.RobotMapInterface;
+import org.inventors.ftc.robotbase.hardware.Battery;
 import org.inventors.ftc.robotbase.hardware.MotorExEx;
 import org.inventors.ftc.robotbase.RobotEx;
 
@@ -19,19 +21,27 @@ import java.util.List;
 @Config
 public class MecanumDriveSubsystem extends SubsystemBase {
     static DriveConstants RobotConstants;
-
     static Telemetry telemetry;
+    private MotorExEx frontLeft, frontRight, rearRight, rearLeft;
+    private List<MotorExEx> motors;
+    private Battery battery;
+    private com.arcrobotics.ftclib.drivebase.MecanumDrive drive;
 
-    public MecanumDriveSubsystem(HardwareMap hardwareMap, Telemetry telemetry, RobotEx.OpModeType type, DriveConstants robotConstants) {
+    private boolean fieldCentricEnabled = true;
+
+    public MecanumDriveSubsystem(
+            RobotMapInterface robotMap,
+            DriveConstants robotConstants
+    ) {
         this.RobotConstants = robotConstants;
-        this.telemetry = telemetry;
+        this.telemetry = robotMap.getTelemetry();
 
-        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
+        this.battery = battery;
 
-        frontLeft = new MotorExEx(hardwareMap, "frontLeft", Motor.GoBILDA.RPM_435);
-        frontRight = new MotorExEx(hardwareMap, "frontRight", Motor.GoBILDA.RPM_435);
-        rearLeft = new MotorExEx(hardwareMap, "rearLeft", Motor.GoBILDA.RPM_435);
-        rearRight = new MotorExEx(hardwareMap, "rearRight", Motor.GoBILDA.RPM_435);
+        this.frontLeft = robotMap.getFrontLeftMotor();
+        this.frontRight = robotMap.getFrontRightMotor();
+        this.rearLeft = robotMap.getRearLeftMotor();
+        this.rearRight = robotMap.getRearRightMotor();
 
         motors = Arrays.asList(frontLeft, frontRight, rearLeft, rearRight);
 
@@ -45,7 +55,7 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         if (RobotConstants.RUN_USING_ENCODER && RobotConstants.MOTOR_VELO_PID != null) {
             setPIDFCoefficients(RobotConstants.VELO_KP, RobotConstants.VELO_KI, RobotConstants.VELO_KD);
 
-            double batteryPercentage = 12 / batteryVoltageSensor.getVoltage();
+            double batteryPercentage = 12 / battery.getVoltage();
 
             frontLeft.setFeedforwardCoefficients(
                     RobotConstants.frontLeftFeedForward[0],
@@ -74,50 +84,18 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         rearLeft.resetEncoder();
         rearRight.resetEncoder();
 
-        if (type == TELEOP) {
-            /* ------------------------------------- TELEOP ------------------------------------- */
-            CommandScheduler.getInstance().registerSubsystem(this);
-            setMotorsInverted(RobotConstants.frontLeftInverted, RobotConstants.frontRightInverted, RobotConstants.rearRightInverted, RobotConstants.rearLeftInverted);
-            drive = new com.arcrobotics.ftclib.drivebase.MecanumDrive(
-                    frontLeft, frontRight, rearLeft, rearRight
-            );
-        }
+        CommandScheduler.getInstance().registerSubsystem(this);
+        setMotorsInverted(RobotConstants.frontLeftInverted, RobotConstants.frontRightInverted, RobotConstants.rearRightInverted, RobotConstants.rearLeftInverted);
+        drive = new com.arcrobotics.ftclib.drivebase.MecanumDrive(
+                frontLeft, frontRight, rearLeft, rearRight
+        );
     }
-  
-    /* ----------------------------------------- TELEOP ----------------------------------------- */
-    private MotorExEx frontLeft, frontRight, rearRight, rearLeft;
-    private List<MotorExEx> motors;
-    private VoltageSensor batteryVoltageSensor;
-    protected String m_name = this.getClass().getSimpleName();
-    private com.arcrobotics.ftclib.drivebase.MecanumDrive drive;
 
-    private boolean fieldCentricEnabled = true;
-
-    public String getName()
-    {
-        return m_name;
-    }
-    public void setName(String name)
-    {
-        m_name = name;
-    }
-    public String getSubsystem()
-    {
-        return getName();
-    }
-    public void setSubsystem(String subsystem)
-    {
-        setName(subsystem);
-    }
     void drive(double strafeSpeed, double forwardSpeed, double turnSpeed, double heading, double fast_input, double slow_input)
     {
         drive.setMaxSpeed(RobotConstants.DEFAULT_SPEED_PERC + fast_input * RobotConstants.FAST_SPEED_PERC - slow_input * RobotConstants.SLOW_SPEED_PERC);
 
-        if (fieldCentricEnabled) {
-            drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, heading);
-        } else {
-            drive.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed);
-        }
+        drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, fieldCentricEnabled ? heading : 0);
     }
 
     public void setMotorsInverted(

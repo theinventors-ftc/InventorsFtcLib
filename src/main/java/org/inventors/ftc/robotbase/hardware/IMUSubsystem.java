@@ -4,6 +4,8 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.inventors.ftc.robotbase.RobotMapInterface;
+
 import com.arcrobotics.ftclib.util.Timing.Timer;
 public class IMUSubsystem extends SubsystemBase {
     private final RevIMU imu;
@@ -19,13 +21,13 @@ public class IMUSubsystem extends SubsystemBase {
 
     private Telemetry telemetry;
 
-    public IMUSubsystem(HardwareMap hardwareMap, Telemetry telemetry, String id, double initYaw) {
-        imu = new RevIMU(hardwareMap, id);
+    public IMUSubsystem(RobotMapInterface robotMap, double initYaw) {
+        imu = new RevIMU(robotMap);
         imu.init(initYaw);
         timer = new Timer(0);
         timer.start();
 
-        this.telemetry = telemetry;
+        this.telemetry = robotMap.getTelemetry();
     }
 
     public void periodic() {

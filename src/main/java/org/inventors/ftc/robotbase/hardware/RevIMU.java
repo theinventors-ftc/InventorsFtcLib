@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.inventors.ftc.robotbase.RobotMapInterface;
 
 @Disabled
 public class RevIMU implements HardwareDevice {
@@ -41,21 +42,22 @@ public class RevIMU implements HardwareDevice {
     /**
      * Create a new object for the built-in gyro/imu in the Rev Expansion Hub
      *
-     * @param hw      Hardware map
+     * @param robotMap      Robot map
      * @param imuName Name of sensor in configuration
      */
-    public RevIMU(HardwareMap hw, String imuName) {
-        revIMU = hw.get(IMU.class, imuName);
+    public RevIMU(RobotMapInterface robotMap, String imuName) {
+//        revIMU = hw.get(IMU.class, imuName);
+        revIMU = robotMap.getIMU();
         multiplier = 1;
     }
 
     /**
      * Create a new object for the built-in gyro/imu in the Rev Expansion Hub with the default configuration name of "imu"
      *
-     * @param hw Hardware map
+     * @param robotMap Robot map
      */
-    public RevIMU(HardwareMap hw) {
-        this(hw, "imu");
+    public RevIMU(RobotMapInterface robotMap) {
+        this(robotMap, "imu");
     }
 
     /**
@@ -129,15 +131,15 @@ public class RevIMU implements HardwareDevice {
         return new double[3];
     }
 
-    public void disable() {
-        revIMU.close();
-    }
-
     /**
      * @return the internal sensor being wrapped
      */
     public IMU getRevIMU() {
         return revIMU;
+    }
+
+    public void disable() {
+        revIMU.close();
     }
 
     @Override

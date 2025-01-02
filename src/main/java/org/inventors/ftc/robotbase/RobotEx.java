@@ -6,7 +6,6 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.inventors.ftc.robotbase.controllers.HeadingControllerSubsystem;
 import org.inventors.ftc.robotbase.controllers.HeadingControllerTargetSubsystem;
@@ -16,7 +15,6 @@ import org.inventors.ftc.robotbase.drive.MecanumDriveSubsystem;
 import org.inventors.ftc.robotbase.hardware.Camera;
 import org.inventors.ftc.robotbase.hardware.GamepadExEx;
 import org.inventors.ftc.robotbase.hardware.IMUSubsystem;
-import org.inventors.ftc.robotbase.hardware.MotorExEx;
 
 public class RobotEx {
     public enum OpModeType {
@@ -27,6 +25,8 @@ public class RobotEx {
         RED,
         BLUE
     }
+
+    protected RobotMapInterface robotMap;
 
     protected OpModeType opModeType;
     protected Alliance alliance;
@@ -48,60 +48,56 @@ public class RobotEx {
     protected IMUSubsystem gyro;
 
     protected Telemetry telemetry;
-
-    public RobotEx(HardwareMap hardwareMap, DriveConstants RobotConstants, Telemetry telemetry,
-                   GamepadExEx driverOp, GamepadExEx toolOp, OpModeType type, Alliance alliance,
-                   String imu_id, Boolean initCamera, Pose2d startingPose
+    public RobotEx(RobotMapInterface robotMap, DriveConstants RobotConstants,
+                   OpModeType type, Alliance alliance, Boolean initCamera, Pose2d startingPose
     ) {
+        this.robotMap = robotMap;
         this.initCamera = initCamera;
         this.alliance = alliance;
 
-        initCommon(hardwareMap, RobotConstants, telemetry, type, imu_id, startingPose);
+        initCommon(robotMap, RobotConstants, type, startingPose);
 
         if (type == OpModeType.TELEOP) {
-            initTele(hardwareMap, driverOp, toolOp);
+            initTele(robotMap);
             opModeType = OpModeType.TELEOP;
         } else {
-            initAuto(hardwareMap);
+            initAuto(robotMap);
             opModeType = OpModeType.AUTO;
         }
     }
 
-    public void initCommon(HardwareMap hardwareMap, DriveConstants RobotConstants,
-                           Telemetry telemetry, OpModeType type, String imuId,
-                           Pose2d startingPose) {
+    public void initCommon(RobotMapInterface robotMap, DriveConstants RobotConstants,
+                           OpModeType type, Pose2d startingPose) {
         // --------------------------------------- Camera --------------------------------------- //
         this.dashboard = FtcDashboard.getInstance();
         if (this.initCamera) {
-            camera = new Camera(hardwareMap, dashboard, telemetry);
+            camera = new Camera(robotMap, dashboard);
         }
 
         // ------------------------------------- Telemetries ------------------------------------ //
-        this.telemetry = telemetry;
+        this.telemetry = robotMap.getTelemetry();
 
         // ---------------------------------------- Drive --------------------------------------- //
-        drive = new MecanumDriveSubsystem(hardwareMap, telemetry, type, RobotConstants);
+        drive = new MecanumDriveSubsystem(robotMap, RobotConstants);
 
         // ----------------------------------------- IMU ---------------------------------------- //
-        gyro = new IMUSubsystem(hardwareMap, telemetry, imuId,
-                Math.toDegrees(startingPose.getHeading()));
+        gyro = new IMUSubsystem(robotMap, Math.toDegrees(startingPose.getHeading()));
 
         CommandScheduler.getInstance().registerSubsystem(gyro);
     }
 
-    public void initAuto(HardwareMap hardwareMap) {
+    public void initAuto(RobotMapInterface robotMap) {
         // ------------------------------------- Drivetrain ------------------------------------- //
         // TODO: Only if we use RoadRunner in TeleOP
 
         // ----------------------- Setup and Initialize Mechanisms Objects ---------------------- //
-        initMechanismsAutonomous(hardwareMap);
+        initMechanismsAutonomous(robotMap);
     }
 
-    public void initTele(HardwareMap hardwareMap, GamepadExEx driverOp,
-                         GamepadExEx toolOp) {
+    public void initTele(RobotMapInterface robotMap) {
         // -------------------------------------- Gamepads -------------------------------------- //
-        this.driverOp = driverOp;
-        this.toolOp = toolOp;
+        this.driverOp = robotMap.getDriverOp();
+        this.toolOp = robotMap.getToolOp();
 
         // ------------------------------------- Drivetrain ------------------------------------- //
         driveCommand = new MecanumDriveCommand(drive, this::drivetrainForward,
@@ -144,17 +140,10 @@ public class RobotEx {
                 .whenPressed(new InstantCommand(drive::setRobotCentric, drive));
 
         // ----------------------- Setup and Initialize Mechanisms Objects ---------------------- //
-        initMechanismsTeleOp(hardwareMap);
+        initMechanismsTeleOp(robotMap);
     }
 
-    public void initMechanismsTeleOp(HardwareMap hardwareMap) {
-        // should be overridden by child class
-    }
-
-    public void initMechanismsAutonomous(HardwareMap hardwareMap) {
-        // should be overridden by child class
-    }
-
+    // ------------------------------------- Drive Commands ------------------------------------- //
     public double drivetrainStrafe() {
         return driverOp.getLeftX();
     }
@@ -169,14 +158,16 @@ public class RobotEx {
         return driverOp.getRightX();
     }
 
-    public MotorExEx[] getMotors() {
-        return drive.getMotors();
+    // -------------------------------- Mechanisms Initialization ------------------------------- //
+    public void initMechanismsAutonomous(RobotMapInterface robotMap) {
+        // should be overridden by child class
     }
 
-    public Telemetry getTelemetry() {
-        return telemetry;
+    public void initMechanismsTeleOp(RobotMapInterface robotMap) {
+        // should be overridden by child class
     }
 
+    // ----------------------------------------- Getters ---------------------------------------- //
     public double getHeading() {
         return gyro.getRawYaw();
     }
