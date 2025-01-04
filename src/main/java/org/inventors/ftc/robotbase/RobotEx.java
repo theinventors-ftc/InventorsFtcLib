@@ -99,8 +99,8 @@ public class RobotEx {
         // ------------------------------------- Drivetrain ------------------------------------- //
         driveCommand = new MecanumDriveCommand(drive, this::drivetrainForward,
                 this::drivetrainStrafe, this::drivetrainTurn, gyro::getRawYaw,
-                () -> driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER), () -> driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),
-                telemetry);
+                () -> driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER),
+                () -> driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
 
         CommandScheduler.getInstance().registerSubsystem(drive);
         drive.setDefaultCommand(driveCommand);
@@ -140,6 +140,15 @@ public class RobotEx {
         if (gyroFollow.isEnabled()) return -gyroFollow.calculateTurn();
 
         return driverOp.getRightX();
+    }
+
+    // ------------------------------------- Drive Type Pick ------------------------------------ //
+    public void setFieldCentric() {
+        drive.setFieldCentric();
+    }
+
+    public void setRobotCentric() {
+        drive.setRobotCentric();
     }
 
     // -------------------------------- Mechanisms Initialization ------------------------------- //
