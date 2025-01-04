@@ -36,7 +36,7 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         this.RobotConstants = robotConstants;
         this.telemetry = robotMap.getTelemetry();
 
-        this.battery = battery;
+        this.battery = robotMap.getBattery();
 
         this.frontLeft = robotMap.getFrontLeftMotor();
         this.frontRight = robotMap.getFrontRightMotor();
