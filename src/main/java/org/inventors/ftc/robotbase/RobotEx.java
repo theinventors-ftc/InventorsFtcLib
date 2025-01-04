@@ -118,26 +118,13 @@ public class RobotEx {
                 .whenPressed(new InstantCommand(gyroFollow::toggleState, gyroFollow));
 
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
-                .whenPressed(new SequentialCommandGroup(
-                            new InstantCommand(gyroFollow::enable, gyroFollow),
-                            new InstantCommand(() -> gyroFollow.setGyroTarget(-90), gyroFollow)
-                ));
-
-
-        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
-                .whenPressed(new SequentialCommandGroup(
-                        new InstantCommand(gyroFollow::enable, gyroFollow),
-                        new InstantCommand(() -> gyroFollow.setGyroTarget(90), gyroFollow)
-                ));
-
-        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
                 .whenPressed(new InstantCommand(drive::setFieldCentric, drive));
 
         driverOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
                 .whenPressed(new InstantCommand(drive::setRobotCentric, drive));
 
         // ----------------------- Setup and Initialize Mechanisms Objects ---------------------- //
-        initMechanismsTeleOp();
+//        initMechanismsTeleOp();
     }
 
     // ------------------------------------- Drive Commands ------------------------------------- //
