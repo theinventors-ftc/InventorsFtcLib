@@ -3,6 +3,7 @@ package org.inventors.ftc.robotbase;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.inventors.ftc.robotbase.hardware.Battery;
 import org.inventors.ftc.robotbase.hardware.Camera;
 import org.inventors.ftc.robotbase.hardware.GamepadExEx;
 import org.inventors.ftc.robotbase.hardware.MotorExEx;
@@ -26,4 +27,7 @@ public interface RobotMapInterface {
     // ------------------------------------------ Gamepads -------------------------------------- //
     GamepadExEx getDriverOp();
     GamepadExEx getToolOp();
+
+    // ------------------------------------------- Battery -------------------------------------- //
+    Battery getBattery();
 }
