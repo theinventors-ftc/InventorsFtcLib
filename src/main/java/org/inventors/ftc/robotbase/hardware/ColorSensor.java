@@ -17,8 +17,10 @@ public class ColorSensor extends SubsystemBase {
 
     public ColorSensor(HardwareMap hm, String id) {
         this.sensor = hm.get(NormalizedColorSensor.class, id);
+    }
 
-        sensor.setGain(10);
+    public void setGain(int gain) {
+        sensor.setGain(gain);
     }
 
     public void setLight(Boolean state) {
