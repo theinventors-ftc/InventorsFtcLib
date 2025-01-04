@@ -1,13 +1,11 @@
 package org.inventors.ftc.robotbase.hardware;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.inventors.ftc.opencvpipelines.TeamPropDetectionPipeline;
 import org.inventors.ftc.robotbase.RobotMapInterface;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
@@ -20,10 +18,6 @@ public class Camera {
     public Camera(RobotMapInterface robotMap, FtcDashboard dashboard) {
         this.telemetry = robotMap.getTelemetry();
 
-//        int cameraMonitorViewId = hardwareMap.appContext.getResources()
-//                .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-//        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-//                "webcam"), cameraMonitorViewId);
         this.webcam = robotMap.getCamera();
 
         dashboard.startCameraStream(webcam, 0);

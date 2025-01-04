@@ -2,20 +2,17 @@ package org.inventors.ftc.robotbase.drive;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import java.util.function.DoubleSupplier;
 
 public class MecanumDriveCommand extends CommandBase {
     private final MecanumDriveSubsystem drivetrain;
-    private final DoubleSupplier forwardSpeed, strafeSpeed, turnSpeed, heading, slowTrigger, fastTrigger;
-
-    private Telemetry telemetry;
+    private final DoubleSupplier forwardSpeed, strafeSpeed, turnSpeed, heading, slowTrigger,
+            fastTrigger;
 
     public MecanumDriveCommand(MecanumDriveSubsystem drivetrain, DoubleSupplier forwardSpeed,
                                DoubleSupplier strafeSpeed, DoubleSupplier turnSpeed,
-                               DoubleSupplier heading, DoubleSupplier fastTrigger, DoubleSupplier slowTrigger,
-                               Telemetry telemetry) {
+                               DoubleSupplier heading, DoubleSupplier fastTrigger,
+                               DoubleSupplier slowTrigger) {
         this.drivetrain = drivetrain;
         this.forwardSpeed = forwardSpeed;
         this.strafeSpeed = strafeSpeed;
@@ -23,8 +20,6 @@ public class MecanumDriveCommand extends CommandBase {
         this.heading = heading;
         this.fastTrigger = fastTrigger;
         this.slowTrigger = slowTrigger;
-
-        this.telemetry = telemetry;
       
         addRequirements(this.drivetrain);
     }

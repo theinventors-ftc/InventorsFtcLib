@@ -1,19 +1,14 @@
 package org.inventors.ftc.robotbase.drive;
 
-import static org.inventors.ftc.robotbase.RobotEx.OpModeType.TELEOP;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.inventors.ftc.robotbase.RobotMapInterface;
 import org.inventors.ftc.robotbase.hardware.Battery;
 import org.inventors.ftc.robotbase.hardware.MotorExEx;
-import org.inventors.ftc.robotbase.RobotEx;
 
 import java.util.Arrays;
 import java.util.List;
