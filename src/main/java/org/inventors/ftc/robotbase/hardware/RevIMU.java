@@ -35,34 +35,16 @@ public class RevIMU implements HardwareDevice {
      * Create a new object for the built-in gyro/imu in the Rev Expansion Hub
      *
      * @param robotMap      Robot map
-     * @param imuName Name of sensor in configuration
      */
     public RevIMU(RobotMapInterface robotMap) {
 //        revIMU = hw.get(IMU.class, imuName);
         revIMU = robotMap.getIMU();
         multiplier = 1;
     }
-
-    /**
-     * Initializes gyro with default parameters.
-     */
-    public void init(double initYaw) {
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.UP;
-
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-
-        IMU.Parameters parameters = new IMU.Parameters(orientationOnRobot);
-
-        init(parameters, initYaw);
-    }
-
     /**
      * Initializes gyro with custom parameters.
      */
-    public void init(IMU.Parameters parameters, double initYaw) {
-        revIMU.initialize(parameters);
-
+    public void init(double initYaw) {
         yawOffset += initYaw;
 
         resetYaw();
