@@ -39,8 +39,8 @@ public class RobotEx {
 
     public Camera camera;
 
-    protected HeadingControllerSubsystem gyroFollow;
-    protected HeadingControllerTargetSubsystem gyroTargetSubsystem;
+//    protected HeadingControllerSubsystem gyroFollow;
+//    protected HeadingControllerTargetSubsystem gyroTargetSubsystem;
     protected final Boolean initCamera;
 
     protected IMUSubsystem gyro;
@@ -109,13 +109,13 @@ public class RobotEx {
         driverOp.getGamepadButton(GamepadKeys.Button.START)
                 .whenPressed(new InstantCommand(gyro::resetYawValue, gyro));
 
-        gyroTargetSubsystem = new HeadingControllerTargetSubsystem(driverOp::getRightX, driverOp::getRightY, telemetry);
+//        gyroTargetSubsystem = new HeadingControllerTargetSubsystem(driverOp::getRightX, driverOp::getRightY, telemetry);
 
-        gyroFollow = new HeadingControllerSubsystem(gyro::getYaw,
-                gyro::findClosestOrientationTarget, telemetry);
+//        gyroFollow = new HeadingControllerSubsystem(gyro::getYaw,
+//                gyro::findClosestOrientationTarget, telemetry);
 
-        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new InstantCommand(gyroFollow::toggleState, gyroFollow));
+//        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+//                .whenPressed(new InstantCommand(gyroFollow::toggleState, gyroFollow));
 
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
                 .whenPressed(new InstantCommand(drive::setFieldCentric, drive));
@@ -137,7 +137,7 @@ public class RobotEx {
     }
 
     public double drivetrainTurn() {
-        if (gyroFollow.isEnabled()) return -gyroFollow.calculateTurn();
+//        if (gyroFollow.isEnabled()) return -gyroFollow.calculateTurn();
 
         return driverOp.getRightX();
     }
@@ -171,5 +171,9 @@ public class RobotEx {
 
     public double getHeadingVelocity() {
         return 0.0; // TODO: Implement
+    }
+
+    public Alliance getAlliance() {
+        return alliance;
     }
 }
