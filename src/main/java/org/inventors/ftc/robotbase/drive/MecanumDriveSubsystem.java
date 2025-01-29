@@ -24,6 +24,8 @@ public class MecanumDriveSubsystem extends SubsystemBase {
 
     private boolean fieldCentricEnabled = true;
 
+    private boolean is_enabled = true;
+
     public MecanumDriveSubsystem(
             RobotMapInterface robotMap,
             DriveConstants robotConstants
@@ -88,9 +90,13 @@ public class MecanumDriveSubsystem extends SubsystemBase {
 
     void drive(double strafeSpeed, double forwardSpeed, double turnSpeed, double heading, double fast_input, double slow_input)
     {
-        drive.setMaxSpeed(RobotConstants.DEFAULT_SPEED_PERC + fast_input * RobotConstants.FAST_SPEED_PERC - slow_input * RobotConstants.SLOW_SPEED_PERC);
+        if(is_enabled){
+            drive.setMaxSpeed(RobotConstants.DEFAULT_SPEED_PERC + fast_input * RobotConstants.FAST_SPEED_PERC - slow_input * RobotConstants.SLOW_SPEED_PERC);
 
-        drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, fieldCentricEnabled ? heading : 0);
+            drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, fieldCentricEnabled ? heading : 0);
+        } else {
+            drive.setMaxSpeed(1);
+        }
     }
 
     public void setMotorsInverted(
@@ -141,4 +147,7 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         fieldCentricEnabled = false;
     }
 
+    public void setEnabled(boolean enabled) {
+        is_enabled = enabled;
+    }
 }
