@@ -151,6 +151,10 @@ public class RobotEx {
         drive.setRobotCentric();
     }
 
+    public void drive_setEnabled(boolean enabled) {
+        drive.setEnabled(enabled);
+    }
+
     // -------------------------------- Mechanisms Initialization ------------------------------- //
     public void initMechanismsAutonomous() {
         // should be overridden by child class
