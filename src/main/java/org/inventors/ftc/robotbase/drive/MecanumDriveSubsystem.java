@@ -88,10 +88,10 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         );
     }
 
-    void drive(double strafeSpeed, double forwardSpeed, double turnSpeed, double heading, double fast_input, double slow_input)
+    void drive(double strafeSpeed, double forwardSpeed, double turnSpeed, double heading, double slow_fast_input)
     {
         if(is_enabled){
-            drive.setMaxSpeed(RobotConstants.DEFAULT_SPEED_PERC + fast_input * RobotConstants.FAST_SPEED_PERC - slow_input * RobotConstants.SLOW_SPEED_PERC);
+            drive.setMaxSpeed(RobotConstants.FAST_SPEED_PERC * slow_fast_input);
 
             drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, fieldCentricEnabled ? heading : 0);
         } else {
