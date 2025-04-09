@@ -99,8 +99,7 @@ public class RobotEx {
         // ------------------------------------- Drivetrain ------------------------------------- //
         driveCommand = new MecanumDriveCommand(drive, this::drivetrainForward,
                 this::drivetrainStrafe, this::drivetrainTurn, gyro::getRawYaw,
-                () -> driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER),
-                () -> driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
+                () -> driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
 
         CommandScheduler.getInstance().registerSubsystem(drive);
         drive.setDefaultCommand(driveCommand);
