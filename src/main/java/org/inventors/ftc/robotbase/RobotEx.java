@@ -154,6 +154,10 @@ public class RobotEx {
         drive.setEnabled(enabled);
     }
 
+    public void drive_isInAuto(boolean set) {
+        drive.setInAutoMode(set);
+    }
+
     // -------------------------------- Mechanisms Initialization ------------------------------- //
     public void initMechanismsAutonomous() {
         // should be overridden by child class
