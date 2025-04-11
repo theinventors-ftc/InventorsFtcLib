@@ -93,12 +93,15 @@ public class MecanumDriveSubsystem extends SubsystemBase {
     {
         if (!inAutoMode) {
             if(is_enabled){
-                drive.setMaxSpeed(RobotConstants.FAST_SPEED_PERC * slow_fast_input);
+                drive.setMaxSpeed(RobotConstants.SLOW_SPEED_PERC + RobotConstants.FAST_SPEED_PERC * slow_fast_input);
 
                 drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, fieldCentricEnabled ? heading : 0);
             } else {
                 drive.setMaxSpeed(1);
             }
+        } else {
+            for (MotorExEx motor : motors)
+                motor.setZeroPowerBehavior(MotorExEx.ZeroPowerBehavior.FLOAT);
         }
     }
 
