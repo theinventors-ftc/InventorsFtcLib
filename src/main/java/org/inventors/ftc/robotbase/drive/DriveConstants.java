@@ -39,7 +39,7 @@ public class DriveConstants {
 
     public static double DEFAULT_SPEED_PERC = 0.6;
     public static double FAST_SPEED_PERC = 1;
-    public static double SLOW_SPEED_PERC = 0.7;
+    public static double SLOW_SPEED_PERC = 1;
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
